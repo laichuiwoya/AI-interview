@@ -1,0 +1,5 @@
+faster-whisper>=1.1,<2
+# faster-whisper's decoder still passes metadata_errors to av.open().
+av>=11,<19
+pypdf>=4.0
+python-docx>=1.1

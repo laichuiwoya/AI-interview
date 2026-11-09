@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>面试搭子</title>
+<style>
+:root{font-family:"Microsoft YaHei",sans-serif;color:#202c29;background:#f3f1e9}*{box-sizing:border-box}body{margin:0}header{display:flex;justify-content:space-between;align-items:center;padding:24px 6%;border-bottom:1px solid #d9ddd2} .brand{font-weight:800;letter-spacing:.12em}.tag{font-size:12px;color:#65756c;letter-spacing:.12em}main{max-width:1200px;margin:auto;padding:60px 6%} .intro{display:flex;justify-content:space-between;align-items:end;margin-bottom:36px}.eyebrow{color:#49856a;font-size:12px;letter-spacing:.18em;font-weight:bold}h1{font-family:Georgia,"Microsoft YaHei",serif;font-size:clamp(34px,5vw,58px);margin:12px 0;letter-spacing:-.04em} .intro p{color:#68766e;line-height:1.8;margin:0} .number{font:64px Georgia;color:#d5ddd1}.layout{display:grid;grid-template-columns:340px 1fr;gap:20px}.panel{background:#fffefa;border:1px solid #dfe3d9;border-radius:12px;padding:26px}.panel h2{font-size:18px;margin:0 0 8px}.hint{font-size:13px;line-height:1.7;color:#78867c;margin:0 0 25px}label{display:block;font-size:13px;font-weight:bold;margin:22px 0 9px}input,textarea{width:100%;border:1px solid #d8ded3;border-radius:7px;padding:12px;font:inherit;font-size:14px;background:#fafbf7;color:#26372e;resize:vertical}textarea{min-height:180px;line-height:1.7}input:focus,textarea:focus{outline:2px solid #9ac8ae;border-color:transparent}button{border:0;border-radius:7px;background:#285f48;color:white;padding:13px 18px;font:inherit;font-weight:bold;cursor:pointer}button:hover{background:#194b37}button:disabled{opacity:.5;cursor:wait}.start{width:100%;margin-top:20px}.chat{min-height:510px;display:flex;flex-direction:column}.chat-head{display:flex;align-items:center;gap:12px;border-bottom:1px solid #edf0e9;padding-bottom:19px}.avatar{display:grid;place-items:center;border-radius:50%;width:42px;height:42px;background:#dcebe0;color:#285f48;font-weight:bold}.chat-head h2{margin:0;font-size:15px}.chat-head p{margin:5px 0 0;color:#829087;font-size:12px}.messages{flex:1;min-height:270px;max-height:520px;overflow:auto;padding:25px 0}.empty{text-align:center;padding:65px 10px;color:#8b9b8f;line-height:1.8}.bubble{max-width:85%;padding:13px 16px;border-radius:4px 14px 14px 14px;background:#eef3eb;line-height:1.7;font-size:14px;white-space:pre-wrap;margin:0 0 18px}.bubble.user{margin-left:auto;background:#295e48;color:white;border-radius:14px 4px 14px 14px}.composer{display:flex;gap:10px;border-top:1px solid #edf0e9;padding-top:18px}.composer textarea{min-height:50px;height:50px;max-height:130px}.error{color:#ac483b;font-size:13px;line-height:1.5;margin:10px 0 0;min-height:20px}footer{padding:30px 6%;color:#89958a;font-size:12px;display:flex;justify-content:space-between}footer a{color:inherit}@media(max-width:760px){main{padding-top:35px}.layout{grid-template-columns:1fr}.number{display:none}.chat{min-height:450px}.panel{padding:20px}}
+.composer button{flex-shrink:0}.finish{display:block;margin:12px 0 0 auto;background:#e4ece1;color:#285f48}.finish:hover{background:#d6e5d5}.report{border-top:1px solid #dfe3d9;margin-top:22px;padding-top:22px}.report p{white-space:pre-wrap;line-height:1.8;font-size:14px}.report[hidden],button[hidden]{display:none}
+@media(max-width:760px){.chat{min-height:0;scroll-margin-top:12px}.messages{min-height:132px;max-height:330px;padding-block:18px}}
+.voice-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0 0}.voice-tools button{background:#e4ece1;color:#285f48;padding:9px 12px;font-size:13px}.voice-tools button:hover{background:#d6e5d5}.voice-tools button[data-recording="true"]{background:#953f35;color:#fff}.voice-tools label{margin:0;display:flex;align-items:center;gap:6px;color:#435b4c}.voice-tools input{width:auto;margin:0;accent-color:#285f48}.voice-note{min-height:20px;margin:9px 0 0;color:#526b5e;font-size:13px;line-height:1.6}.voice-note[data-error="true"]{color:#9b3a2f}.chat{min-width:0}.bubble,.report p{overflow-wrap:anywhere}.composer textarea{height:76px;min-width:0}.composer button{align-self:end}@media(max-width:480px){.composer button{padding-inline:12px}}
+:root{color:#112448;background:#eff4fb;--campus-blue:#1849a6;--campus-dark:#10337d;--campus-muted:#486187}
+header,.panel,.composer,.report{border-color:#dce5f3}.intro p,.hint,.voice-note,.voice-tools label,.tag,footer{color:var(--campus-muted)}.eyebrow{color:var(--campus-blue)}.number{color:#cbdaf0}.panel{background:#fff}input,textarea{background:#f7faff;color:#112448;border-color:#cddbf0}input:focus,textarea:focus{outline-color:#789ff4}button,.bubble.user{background:var(--campus-blue)}button:hover{background:var(--campus-dark)}.bubble,.finish,.voice-tools button{background:#edf3ff;color:#1c438a}.finish:hover,.voice-tools button:hover{background:#dce9ff}.voice-tools input{accent-color:var(--campus-blue)}.bubble.user{color:white}
+main{max-width:1390px}
+.layout{grid-template-columns:minmax(0,1.23fr) minmax(320px,1fr);grid-template-areas:"figure prepare" "figure chat";align-items:start}
+.prepare{grid-area:prepare}.chat{grid-area:chat;scroll-margin-top:20px}
+.avatar-stage{grid-area:figure;position:sticky;top:20px;min-width:0;overflow:hidden;border:1px solid #42595a;border-radius:12px;background:#172b30;color:#f4f1e7}
+.avatar-view{position:relative;aspect-ratio:4/3;background:#849b9a}
+.avatar-view canvas,.avatar-view img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.avatar-view:has(canvas:not([hidden])) img{visibility:hidden}
+.avatar-corner{position:absolute;z-index:1;top:14px;left:14px;padding:7px 10px;border:1px solid #ffffff38;border-radius:4px;background:#172b30df;color:#f4f1e7;font-size:10px;letter-spacing:.13em;pointer-events:none}
+.avatar-caption{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 14px;align-items:center;padding:17px 20px 19px}
+.avatar-caption span{grid-column:1/-1;color:#adc8bf;font-size:11px;letter-spacing:.12em}
+.avatar-caption h2{margin:0;font-size:23px;line-height:1.35}
+.avatar-caption p{grid-column:1;margin:0;color:#d3e3dc;font-size:13px;line-height:1.5}
+.avatar-actions{grid-column:2;grid-row:2/4;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.avatar-caption button{border:1px solid #a9cbc463;background:#29484b;padding:9px 12px;font-size:12px}
+.avatar-caption button:hover{background:#3a6062}
+.avatar-help{grid-column:1/-1;color:#d3e3dc;margin-top:8px}.avatar-view canvas[data-inspecting="true"]{cursor:grab;touch-action:pan-y}.avatar-view canvas:active{cursor:grabbing}.avatar-view canvas:focus-visible{outline:2px solid #8be4e6;outline-offset:-3px}
+.avatar-stage[data-state="speaking"] .avatar-caption span{color:#b1eed5}
+@media(max-width:760px){.layout{grid-template-columns:minmax(0,1fr);grid-template-areas:"prepare" "figure" "chat"}.avatar-stage{position:relative;top:auto}.avatar-caption{padding:13px 15px 15px}}
+.step{border:1px solid #dce5f3;border-radius:10px;padding:14px 16px;margin-bottom:12px;transition:.2s}
+.step[data-state="active"]{border-color:#789ff4;box-shadow:0 0 0 3px #e3ecff}
+.step[data-state="locked"]{opacity:.5;pointer-events:none}
+.step[data-state="locked"] .step-body{display:none}
+.step-head{display:flex;align-items:center;gap:10px;font-size:14px}
+.step-no{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#edf3ff;color:var(--campus-blue);font-size:12px;font-weight:bold}
+.step[data-state="done"] .step-no{background:var(--campus-blue);color:#fff}
+.step-done{display:none;margin-left:auto;font-style:normal;font-size:12px;color:#2a8a5a}
+.step[data-state="done"] .step-done{display:inline}
+.step-body{margin-top:12px}
+.row{display:flex;gap:8px}.row input{flex:1;min-width:0}
+button.ghost{background:#edf3ff;color:#1c438a;padding:10px 14px;font-size:13px;flex-shrink:0}button.ghost:hover{background:#dce9ff}
+button.link{background:none;color:var(--campus-blue);padding:0;font-size:13px;font-weight:normal}button.link:hover{background:none;text-decoration:underline}
+.role-summary{margin:8px 0 0;font-size:13px;color:var(--campus-muted)}
+.drop{display:block;margin:0;border:1.5px dashed #a9c0e6;border-radius:8px;padding:22px 12px;text-align:center;font-weight:normal;color:var(--campus-muted);cursor:pointer;background:#f7faff;line-height:1.7}
+.drop:hover,.drop[data-over="true"]{border-color:var(--campus-blue);background:#edf3ff}
+.paste{margin-top:10px;font-size:13px}.paste summary{cursor:pointer;color:var(--campus-muted)}.paste textarea{min-height:120px;margin:8px 0}
+.resume-info{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;border-radius:7px;background:#edf3ff;font-size:13px;color:#1c438a;margin-top:10px;overflow-wrap:anywhere}
+.resume-info[hidden],.role-summary[hidden]{display:none}
+.step[data-state="done"] .drop,.step[data-state="done"] .paste{display:none}
+/* 右栏高度与左侧面试官对齐：聊天区不撑高行，消息区内部滚动 */
+@media(min-width:761px){
+  .layout{grid-template-rows:auto minmax(0,1fr);align-items:stretch}
+  .avatar-stage{grid-row:1/3;align-self:start;position:relative;top:auto}
+  .prepare{margin:0}
+  .chat{contain:size;min-height:220px;display:flex;flex-direction:column;overflow:hidden;padding:18px 22px}
+  .chat .messages{flex:1 1 0;min-height:0;max-height:none;padding:12px 0}
+  .chat .empty{padding:24px 10px}
+  .chat .report{overflow:auto;max-height:45%}
+}
+.voice-tools .finish{margin:0 0 0 auto}
+.step-value{display:none}
+.prepare[data-compact="true"]{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px 14px}
+.prepare[data-compact="true"]>h2,.prepare[data-compact="true"]>.hint,.prepare[data-compact="true"] .step-body,.prepare[data-compact="true"] .step-head strong,.prepare[data-compact="true"] .step-done{display:none}
+.prepare[data-compact="true"] .step{flex:1 1 0;min-width:0;margin:0;padding:7px 10px;box-shadow:none;border-color:#dce5f3}
+.prepare[data-compact="true"] .step-value{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;color:#1c438a}
+.prepare[data-compact="true"] .step-no{flex-shrink:0;width:20px;height:20px;font-size:11px}
+.prepare[data-compact="true"] .start{width:auto;margin:0;padding:9px 14px;font-size:13px}
+.prepare[data-compact="true"] .error{flex-basis:100%;margin:0;min-height:0}
+</style></head><body><header><div class="brand">◒ 面试搭子</div><div class="tag">PRACTICE MAKES PROGRESS</div></header><main><div class="intro"><div><div class="eyebrow">YOUR INTERVIEW PRACTICE SPACE / 01</div><h1>把每一次回答，<br>变成下一次的底气。</h1><p>输入目标岗位、导入简历，开始一场专属于你的模拟面试。</p></div><div class="number">01 /</div></div><div class="layout"><section class="panel prepare"><h2>面试准备</h2><p class="hint">按顺序完成两步后才能开始面试，问题将围绕你的岗位与简历展开。</p>
+<div class="step" id="step-role" data-state="active">
+  <div class="step-head"><span class="step-no">1</span><strong>输入面试岗位</strong><span class="step-value" id="role-value"></span><em class="step-done">已确认</em></div>
+  <div class="step-body">
+    <div class="row"><input id="role" maxlength="200" placeholder="例如：Java 后端开发工程师"><button type="button" id="role-confirm" class="ghost">确认</button></div>
+    <p class="role-summary" id="role-summary" hidden></p>
+  </div>
+</div>
+<div class="step" id="step-resume" data-state="locked">
+  <div class="step-head"><span class="step-no">2</span><strong>导入简历</strong><span class="step-value" id="resume-value"></span><em class="step-done">已导入</em></div>
+  <div class="step-body">
+    <label class="drop" id="drop" for="resume-file">
+      <input type="file" id="resume-file" accept=".pdf,.docx,.txt,.md" hidden>
+      <span id="drop-text">点击或拖拽上传简历<br><small>支持 PDF / DOCX / TXT / MD，最大 5MB</small></span>
+    </label>
+    <details class="paste"><summary>没有文件？直接粘贴简历文本</summary>
+      <textarea id="resume-paste" maxlength="12000" placeholder="粘贴简历内容：教育背景、技能、项目经历、实习经历……"></textarea>
+      <button type="button" id="paste-confirm" class="ghost">使用粘贴内容</button>
+    </details>
+    <div class="resume-info" id="resume-info" hidden><span id="resume-name"></span><button type="button" id="resume-clear" class="link">重新导入</button></div>
+  </div>
+</div>
+<button class="start" id="start" disabled>开始面试 ↗</button><p id="error" class="error" role="alert"></p></section><section class="panel chat"><div id="messages" class="messages" aria-live="polite"><div class="empty">✳<br>你的面试将在这里开始<br><small>完成「输入岗位 → 导入简历」后点击开始</small></div></div><form id="form" class="composer"><textarea id="answer" maxlength="6000" aria-label="你的回答" placeholder="在这里输入你的回答……" disabled></textarea><button id="send" disabled>发送 ↑</button></form>
+<div class="voice-tools" aria-label="语音工具">
+  <button id="read-question" type="button" disabled>朗读本题</button>
+  <button id="record-answer" type="button" disabled>录音回答</button>
+  <button id="retry-transcription" type="button" hidden>重试转写</button>
+  <label><input id="auto-read" type="checkbox" checked> 自动朗读</label>
+  <button id="finish" class="finish" type="button" hidden>提前结束</button>
+</div>
+<p id="voice-note" class="voice-note" role="status">也可以直接输入文字回答。</p>
+<p id="chat-error" class="error" role="alert" hidden></p>
+<section id="report" class="report" hidden>
+  <h2>面试复盘</h2>
+  <p class="hint">可向上滚动回看完整问答。</p>
+  <p id="report-text"></p>
+</section>
+</section><aside id="portrait" class="avatar-stage" data-state="idle">
+  <div class="avatar-corner" aria-hidden="true">面试室 / 候选人视角</div>
+  <div class="avatar-view">
+    <img src="/interviewer-preview.png" alt="左胸佩戴蓝色徽标的面试官，正面坐在桌对面">
+    <canvas id="avatar-canvas" role="img" aria-label="坐姿 3D 面试官" hidden></canvas>
+  </div>
+  <div class="avatar-caption">
+    <span>广应科 · 面试练习</span>
+    <h2>AI 面试官</h2>
+    <p id="status" aria-live="polite">准备就绪 · 项目经历面试</p>
+    <div class="avatar-actions">
+      <button type="button" id="avatar-motion" aria-pressed="false" hidden>演示动作</button>
+      <button type="button" id="avatar-demo" aria-pressed="false" hidden>查看骨架</button>
+    </div>
+    <small class="avatar-help" id="avatar-help" hidden>拖动画面或按左右方向键，可查看模型的侧面和背面。</small>
+  </div>
+</aside></div></main><footer><span>面试搭子 · 每一次练习都算数</span><a href="https://deerflow.tech" target="_blank" rel="noopener noreferrer">Created By Deerflow</a></footer><script>
+const byId = id => document.getElementById(id)
+const role = byId('role')
+const roleConfirm = byId('role-confirm')
+const roleSummary = byId('role-summary')
+const stepRole = byId('step-role')
+const stepResume = byId('step-resume')
+const resumeFile = byId('resume-file')
+const drop = byId('drop')
+const dropText = byId('drop-text')
+const resumePaste = byId('resume-paste')
+const pasteConfirm = byId('paste-confirm')
+const resumeInfo = byId('resume-info')
+const resumeName = byId('resume-name')
+const resumeClear = byId('resume-clear')
+let confirmedRole = ''
+let resumeText = ''
+let parsing = false
+const MAX_RESUME_BYTES = 5 * 1024 * 1024
+const DROP_DEFAULT = dropText.innerHTML
+const start = byId('start')
+const answer = byId('answer')
+const send = byId('send')
+const finish = byId('finish')
+const messages = byId('messages')
+const error = byId('error')
+const chatError = byId('chat-error')
+const status = byId('status')
+const report = byId('report')
+const reportText = byId('report-text')
+const empty = messages.firstElementChild
+const portrait = byId('portrait')
+const readQuestion = byId('read-question')
+const recordAnswer = byId('record-answer')
+const retryTranscription = byId('retry-transcription')
+const autoRead = byId('auto-read')
+const voiceNote = byId('voice-note')
+const synthesis = window.speechSynthesis
+const canRecord = Boolean(navigator.mediaDevices?.getUserMedia && window.MediaRecorder)
+const RECORD_LIMIT_SECONDS = 90
+let history = []
+let context = null
+let questionLimit = 5
+let busy = false
+let ended = false
+let utterance = null
+let speaking = false
+let speechTimer
+let voiceState = 'idle'
+let recorder = null
+let retryAudio = null
+
+function showVoiceNote(text, isError = false) {
+  voiceNote.textContent = text
+  voiceNote.dataset.error = isError
+}
+
+function bubble(content, speaker) {
+  const element = document.createElement('div')
+  element.className = 'bubble ' + speaker
+  element.textContent = content
+  messages.appendChild(element)
+  messages.scrollTop = messages.scrollHeight
+}
+
+function render() {
+  const completed = Math.floor(history.length / 2)
+  const voiceBusy = voiceState !== 'idle'
+  const canAnswer = Boolean(context && !ended && history.length % 2)
+  const locked = busy || Boolean(context && !ended)
+  stepRole.dataset.state = confirmedRole ? 'done' : 'active'
+  stepResume.dataset.state = !confirmedRole ? 'locked' : resumeText ? 'done' : 'active'
+  role.disabled = locked
+  roleConfirm.disabled = locked
+  roleConfirm.textContent = confirmedRole ? '修改' : '确认'
+  resumeClear.hidden = locked
+  byId('role-value').textContent = confirmedRole
+  byId('resume-value').textContent = resumeName.textContent.replace(/^✓\s*/, '')
+  document.querySelector('.prepare').dataset.compact = Boolean(context)
+  start.disabled = busy || voiceBusy || parsing || !confirmedRole || !resumeText
+  start.textContent = context ? '重新开始 ↻' : !confirmedRole ? '请先输入面试岗位' : !resumeText ? '请先导入简历' : '开始面试 ↗'
+  answer.disabled = busy || !canAnswer
+  send.disabled = answer.disabled || voiceBusy
+  send.textContent = context && completed === questionLimit - 1 ? '提交最后一题' : '发送 ↑'
+  finish.hidden = completed === 0 || !report.hidden
+  finish.disabled = busy || voiceBusy
+  finish.textContent = ended ? '重试生成复盘' : '提前结束'
+  if (!context) {
+    status.textContent = confirmedRole ? `准备就绪 · ${confirmedRole}` : '准备就绪 · 请先输入岗位'
+  } else if (ended) {
+    const label = busy ? '正在生成复盘…' : '面试已结束'
+    status.textContent = `${label} · 已回答 ${completed} / ${questionLimit} 题`
+  } else {
+    const progress = `第 ${completed + 1} / ${questionLimit} 题`
+    const activity = busy ? '面试官思考中…' :
+      voiceState === 'recording' ? '正在倾听' :
+      voiceState === 'transcribing' ? '正在转写…' :
+      speaking ? '面试官正在提问' : '等待回答'
+    status.textContent = `${progress} · ${activity}`
+  }
+  portrait.dataset.state = busy || voiceState === 'transcribing' ? 'thinking' :
+    speaking ? 'speaking' : canAnswer ? 'listening' : 'idle'
+  readQuestion.disabled = !synthesis || !canAnswer || busy || voiceBusy
+  readQuestion.textContent = utterance ? '停止朗读' : '朗读本题'
+  recordAnswer.disabled = !canRecord || !canAnswer || busy ||
+    (voiceBusy && voiceState !== 'recording')
+  recordAnswer.dataset.recording = voiceState === 'recording'
+  if (voiceState !== 'recording') recordAnswer.textContent = '录音回答'
+  retryTranscription.hidden = !retryAudio || !canAnswer
+  retryTranscription.disabled = busy || voiceBusy
+  autoRead.disabled = !synthesis
+}
+
+function stopSpeech() {
+  clearTimeout(speechTimer)
+  const wasQueued = utterance !== null
+  utterance = null
+  speaking = false
+  if (wasQueued) synthesis.cancel()
+  render()
+}
+
+function speakQuestion() {
+  const question = history.at(-1)
+  if (!synthesis || question?.role !== 'assistant' || ended) return
+  stopSpeech()
+  const speech = new SpeechSynthesisUtterance(question.content)
+  speech.lang = 'zh-CN'
+  const voices = synthesis.getVoices().filter(voice => /^zh[-_]CN$/i.test(voice.lang))
+  speech.voice = voices.find(voice => voice.localService) || voices[0] || null
+  utterance = speech
+  speech.onstart = () => {
+    if (utterance !== speech) return
+    clearTimeout(speechTimer)
+    speaking = true
+    render()
+  }
+  speech.onend = () => {
+    if (utterance === speech) stopSpeech()
+  }
+  const failed = () => {
+    if (utterance !== speech) return
+    stopSpeech()
+    showVoiceNote('朗读暂时不可用。可点击重播，或直接阅读上方题目。', true)
+  }
+  speech.onerror = failed
+  speechTimer = setTimeout(failed, 6000)
+  try {
+    synthesis.speak(speech)
+  } catch {
+    failed()
+  }
+  render()
+}
+
+async function transcribeAudio(audio) {
+  voiceState = 'transcribing'
+  retryAudio = null
+  showVoiceNote('正在本机转写录音，请稍候…')
+  render()
+  try {
+    const response = await fetch('/transcribe', {
+      method: 'POST',
+      body: audio,
+      signal: AbortSignal.timeout(120000)
+    })
+    const result = await response.json()
+    if (!response.ok) {
+      if (response.status >= 500) retryAudio = audio
+      showVoiceNote(result.error || '转写失败，请重录。', true)
+      return
+    }
+    answer.value = [answer.value.trimEnd(), result.text].filter(Boolean).join('\n').slice(0, answer.maxLength)
+    showVoiceNote('转写已填入回答框。请核对技术名词，再点击发送。')
+    answer.focus()
+  } catch {
+    retryAudio = audio
+    showVoiceNote('转写请求未完成，可重试或直接输入文字。', true)
+  } finally {
+    voiceState = 'idle'
+    render()
+  }
+}
+
+async function startRecording() {
+  stopSpeech()
+  voiceState = 'opening'
+  showVoiceNote('正在申请麦克风权限…')
+  render()
+  let stream
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({audio: true})
+    const recording = new MediaRecorder(stream)
+    const chunks = []
+    let failed = false
+    let timer
+    const startedAt = performance.now()
+    recording.ondataavailable = event => {
+      if (event.data.size) chunks.push(event.data)
+    }
+    recording.onerror = () => { failed = true }
+    recording.onstop = () => {
+      clearInterval(timer)
+      stream.getTracks().forEach(track => track.stop())
+      recorder = null
+      const audio = new Blob(chunks, {type: recording.mimeType || chunks[0]?.type})
+      if (!failed && audio.size && performance.now() - startedAt >= 1000) {
+        void transcribeAudio(audio)
+      } else {
+        voiceState = 'idle'
+        showVoiceNote('录音太短或采集失败，请重新录制。', true)
+        render()
+      }
+    }
+    recording.start()
+    recorder = recording
+    retryAudio = null
+    voiceState = 'recording'
+    recordAnswer.textContent = '结束录音 · 0 秒'
+    showVoiceNote('正在录音。说完后点击「结束录音」，最长 90 秒。')
+    timer = setInterval(() => {
+      const elapsed = Math.floor((performance.now() - startedAt) / 1000)
+      recordAnswer.textContent = `结束录音 · ${elapsed} 秒`
+      if (elapsed >= RECORD_LIMIT_SECONDS && recording.state === 'recording') recording.stop()
+    }, 1000)
+  } catch (failure) {
+    stream?.getTracks().forEach(track => track.stop())
+    voiceState = 'idle'
+    showVoiceNote(failure.name === 'NotAllowedError' ?
+      '麦克风权限未开启。可在地址栏允许访问后重试，或直接输入文字。' :
+      '无法使用麦克风。请检查设备，或直接输入文字。', true)
+  }
+  render()
+}
+
+readQuestion.addEventListener('click', () => utterance ? stopSpeech() : speakQuestion())
+autoRead.addEventListener('change', () => { if (!autoRead.checked) stopSpeech() })
+recordAnswer.addEventListener('click', () => {
+  if (recorder?.state === 'recording') recorder.stop()
+  else if (voiceState === 'idle') void startRecording()
+})
+retryTranscription.addEventListener('click', () => {
+  if (retryAudio && voiceState === 'idle') void transcribeAudio(retryAudio)
+})
+
+async function request(path, transcript) {
+  busy = true
+  error.textContent = ''
+  chatError.hidden = true
+  chatError.textContent = ''
+  render()
+  try {
+    const response = await fetch(path, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({...context, history: transcript})
+    })
+    const data = await response.json()
+    if (!response.ok) throw new Error(data.error || '请求失败，请重试。')
+    return data
+  } catch (failure) {
+    const notice = transcript.length ? chatError : error
+    notice.hidden = false
+    notice.textContent = failure.message || '请求失败，请检查连接。'
+    return null
+  } finally {
+    busy = false
+    render()
+  }
+}
+
+async function generateReport() {
+  stopSpeech()
+  retryAudio = null
+  showVoiceNote('可在上方回看问答记录。')
+  ended = true
+  const result = await request('/report', history)
+  if (result) {
+    reportText.textContent = result.report
+    report.hidden = false
+    report.scrollIntoView({block: 'nearest'})
+    render()
+  }
+}
+
+start.addEventListener('click', async () => {
+  if (busy || voiceState !== 'idle') return
+  if (!confirmedRole || !resumeText) {
+    error.textContent = '请先输入面试岗位并导入简历。'
+    return
+  }
+  stopSpeech()
+  retryAudio = null
+  showVoiceNote(canRecord ? '可录音回答，也可直接输入文字。' : '当前浏览器无法录音，可直接输入文字回答。')
+  context = {role: confirmedRole, resume: resumeText}
+  history = []
+  ended = false
+  answer.value = ''
+  report.hidden = true
+  reportText.textContent = ''
+  messages.replaceChildren()
+  const result = await request('/interview', history)
+  if (result) {
+    questionLimit = result.question_limit
+    history.push({role: 'assistant', content: result.question})
+    bubble(result.question, 'assistant')
+  } else {
+    context = null
+    messages.appendChild(empty)
+  }
+  render()
+  if (result && matchMedia('(max-width: 760px)').matches) {
+    portrait.scrollIntoView({block: 'start'})
+  } else if (result) {
+    answer.closest('.chat').scrollIntoView({block: 'start'})
+    answer.focus({preventScroll: true})
+  }
+  if (result && autoRead.checked) speakQuestion()
+})
+
+byId('form').addEventListener('submit', async event => {
+  event.preventDefault()
+  const content = answer.value.trim()
+  if (!content || busy || ended || !context || voiceState !== 'idle') return
+  stopSpeech()
+  const nextHistory = [...history, {role: 'user', content}]
+  if (nextHistory.length === 2 * questionLimit) {
+    history = nextHistory
+    bubble(content, 'user')
+    answer.value = ''
+    await generateReport()
+    return
+  }
+  const result = await request('/interview', nextHistory)
+  if (result) {
+    history = [...nextHistory, {role: 'assistant', content: result.question}]
+    bubble(content, 'user')
+    bubble(result.question, 'assistant')
+    answer.value = ''
+    retryAudio = null
+    showVoiceNote(canRecord ? '可录音回答，也可直接输入文字。' : '当前浏览器无法录音，可直接输入文字回答。')
+    render()
+    if (autoRead.checked) speakQuestion()
+  }
+  answer.focus()
+})
+
+finish.addEventListener('click', () => {
+  if (!busy && voiceState === 'idle' && history.length >= 2) generateReport()
+})
+
+// ---------- 第 1 步：岗位 ----------
+function confirmRole() {
+  if (confirmedRole) {
+    confirmedRole = ''
+    roleSummary.hidden = true
+    role.focus()
+    render()
+    return
+  }
+  const value = role.value.trim()
+  if (!value) {
+    error.textContent = '请输入面试岗位。'
+    role.focus()
+    return
+  }
+  error.textContent = ''
+  confirmedRole = value
+  roleSummary.textContent = `面试岗位：${value}`
+  roleSummary.hidden = false
+  render()
+}
+roleConfirm.addEventListener('click', confirmRole)
+role.addEventListener('keydown', event => {
+  if (event.key === 'Enter') { event.preventDefault(); confirmRole() }
+})
+
+// ---------- 第 2 步：简历 ----------
+function setResume(text, name) {
+  const clean = text.replace(/\r/g, '').replace(/\n{3,}/g, '\n\n').trim()
+  if (clean.length < 30) {
+    error.textContent = '简历内容过少（至少 30 字），请检查文件或补充内容。'
+    return
+  }
+  error.textContent = ''
+  resumeText = clean.slice(0, 12000)
+  resumeName.textContent = `✓ ${name} · ${resumeText.length} 字`
+  resumeInfo.hidden = false
+  render()
+}
+
+async function importFile(file) {
+  if (!file || parsing) return
+  const ext = file.name.split('.').pop().toLowerCase()
+  if (!['pdf', 'docx', 'txt', 'md'].includes(ext)) {
+    error.textContent = '暂不支持该格式，请上传 PDF / DOCX / TXT / MD。'
+    return
+  }
+  if (file.size > MAX_RESUME_BYTES) {
+    error.textContent = '文件超过 5MB，请压缩后重试。'
+    return
+  }
+  parsing = true
+  dropText.textContent = `正在解析「${file.name}」…`
+  render()
+  try {
+    if (ext === 'txt' || ext === 'md') {
+      setResume(await file.text(), file.name)
+    } else {
+      const response = await fetch('/parse-resume?ext=' + ext, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/octet-stream'},
+        body: file
+      })
+      const data = await response.json()
+      if (!response.ok) throw new Error(data.error || '简历解析失败。')
+      setResume(data.text, file.name)
+    }
+  } catch (failure) {
+    error.textContent = failure.message || '简历解析失败，可改用粘贴文本。'
+  } finally {
+    parsing = false
+    dropText.innerHTML = DROP_DEFAULT
+    resumeFile.value = ''
+    render()
+  }
+}
+
+resumeFile.addEventListener('change', () => importFile(resumeFile.files[0]))
+drop.addEventListener('dragover', event => { event.preventDefault(); drop.dataset.over = 'true' })
+drop.addEventListener('dragleave', () => { drop.dataset.over = 'false' })
+drop.addEventListener('drop', event => {
+  event.preventDefault()
+  drop.dataset.over = 'false'
+  importFile(event.dataTransfer.files[0])
+})
+pasteConfirm.addEventListener('click', () => setResume(resumePaste.value, '粘贴的简历'))
+resumeClear.addEventListener('click', () => {
+  resumeText = ''
+  resumeInfo.hidden = true
+  render()
+})
+render()
+</script><script src="/avatar.js" type="module"></script></body></html>
