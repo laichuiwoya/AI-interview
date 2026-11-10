@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="专属于你的 AI 语音模拟面试工作台，提供实时 3D 面试官互动、多轮岗位问答与专业复盘分析。">
+  <meta name="description" content="专属于你的 AI 语音模拟面试工作台，提供面试官互动、多轮岗位问答与专业复盘分析。">
   <title>面试搭子 · AI 模拟面试工作台</title>
 <style>
 /* Hallmark · shape: app screen · genre: modern-minimal · theme: Cobalt · redesign: full
@@ -309,7 +309,7 @@ main {
   background: var(--color-graphite-3);
 }
 
-.avatar-view canvas,
+.avatar-view video,
 .avatar-view img {
   position: absolute;
   inset: 0;
@@ -318,8 +318,8 @@ main {
   object-fit: cover;
 }
 
-.avatar-view:has(canvas:not([hidden])) img {
-  visibility: hidden;
+.avatar-view video[hidden] {
+  display: none;
 }
 
 .avatar-corner {
@@ -1100,17 +1100,12 @@ dialog.settings label {
       <aside id="portrait" class="avatar-stage" data-state="idle">
         <div class="avatar-corner" aria-hidden="true">面试室 · 候选人视角</div>
         <div class="avatar-view">
-          <img src="./interviewer-preview.png" alt="坐姿 3D 面试官预览图">
-          <canvas id="avatar-canvas" role="img" aria-label="坐姿 3D 面试官" hidden></canvas>
+          <img src="/interviewer-still.png" alt="AI 面试官">
+          <video id="interviewer-motion" src="/interviewer-motion.mp4" muted loop playsinline preload="auto" aria-hidden="true" hidden></video>
         </div>
         <div class="avatar-caption">
           <h2>AI 面试官</h2>
           <p id="status" aria-live="polite">准备就绪 · 项目经历面试</p>
-          <div class="avatar-actions">
-            <button type="button" id="avatar-motion" aria-pressed="false" hidden>演示动作</button>
-            <button type="button" id="avatar-demo" aria-pressed="false" hidden>查看骨架</button>
-          </div>
-          <small class="avatar-help" id="avatar-help" hidden>拖动画面或按左右方向键，可查看模型的侧面和背面。</small>
         </div>
       </aside>
     </div>
@@ -2179,6 +2174,6 @@ dialog.settings label {
       }
     })
   </script>
-  <script src="/avatar.js" type="module"></script>
+  <script src="/avatar-video.js"></script>
 </body>
 </html>

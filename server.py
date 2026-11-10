@@ -17,6 +17,9 @@ MAX_RESUME_BYTES = 5 * 1024 * 1024
 PUBLIC_FILES = {
     '/': ('index.html', 'text/html; charset=utf-8'),
     '/avatar.js': ('avatar.js', 'text/javascript; charset=utf-8'),
+    '/avatar-video.js': ('avatar-video.js', 'text/javascript; charset=utf-8'),
+    '/interviewer-still.png': ('interviewer-still.png', 'image/png'),
+    '/interviewer-motion.mp4': ('interviewer-motion.mp4', 'video/mp4'),
     '/vendor/three.module.min.js': ('vendor/three.module.min.js', 'text/javascript; charset=utf-8'),
     '/vendor/GLTFLoader.js': ('vendor/GLTFLoader.js', 'text/javascript; charset=utf-8'),
     '/vendor/BufferGeometryUtils.js': ('vendor/BufferGeometryUtils.js', 'text/javascript; charset=utf-8'),
