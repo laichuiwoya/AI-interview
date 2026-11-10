@@ -170,24 +170,10 @@ header {
   letter-spacing: var(--tracking-display);
 }
 
-.tag {
-  font-size: var(--text-xs);
-  color: var(--color-muted);
-}
-
 .header-actions {
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-}
-
-.current-model-tag {
-  font-size: var(--text-xs);
-  color: var(--color-muted);
-  background: var(--color-paper-2);
-  border: var(--rule-hair) solid var(--color-rule);
-  padding: var(--space-2xs) var(--space-sm);
-  border-radius: var(--radius-pill);
 }
 
 /* -------------------------------------------------------------
@@ -240,13 +226,30 @@ main {
     overflow: hidden;
   }
   .chat .messages {
-    flex: 1 1 0;
-    min-height: 0;
-    max-height: none;
+    flex: 0 0 auto;
   }
   .chat .report {
     overflow: auto;
     max-height: 48%;
+  }
+  .layout:has(.prepare[data-compact="true"]) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas: "prepare prepare" "figure chat";
+    grid-template-rows: auto auto;
+  }
+  .layout:has(.prepare[data-compact="true"]) .avatar-stage {
+    grid-row: auto;
+  }
+  .layout:has(.prepare[data-compact="true"]) .chat {
+    box-sizing: border-box;
+    height: 0;
+    min-height: 100%;
+    overflow-y: auto;
+  }
+  .layout:has(.prepare[data-compact="true"]) .messages {
+    flex: 1 1 0;
+    height: auto;
+    min-height: 0;
   }
 }
 
@@ -640,9 +643,8 @@ main {
 }
 
 .messages {
-  flex: 1 1 0;
-  min-height: 240px;
-  max-height: 520px;
+  box-sizing: border-box;
+  height: 400px;
   overflow-y: auto;
   padding: var(--space-md) 0;
   display: flex;
@@ -1003,41 +1005,14 @@ dialog.settings label {
   color: var(--color-ink);
 }
 
-/* -------------------------------------------------------------
- * Footer
- * ------------------------------------------------------------- */
-footer {
-  width: 100%;
-  max-width: var(--container);
-  margin-inline: auto;
-  padding: var(--space-lg) var(--space-lg);
-  border-top: var(--rule-hair) solid var(--color-rule);
-  color: var(--color-muted);
-  font-size: var(--text-xs);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-footer a {
-  color: inherit;
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
-}
-
-footer a:hover {
-  color: var(--color-accent);
-}
 </style>
 </head>
 <body>
   <header>
     <div class="brand-group">
       <div class="brand">面试搭子</div>
-      <div class="tag">AI 语音模拟面试</div>
     </div>
     <div class="header-actions">
-      <span id="current-model-tag" class="current-model-tag">正在获取模型…</span>
       <button type="button" id="open-settings" class="btn btn-ghost">模型配置</button>
       <button type="button" id="open-interviewer" class="btn btn-ghost">面试官设置</button>
     </div>
@@ -1255,11 +1230,6 @@ footer a:hover {
       </div>
     </form>
   </dialog>
-
-  <footer>
-    <span>面试搭子 · 每一次练习都算数</span>
-    <a href="https://deerflow.tech" target="_blank" rel="noopener noreferrer">Created By Deerflow</a>
-  </footer>
 
   <script>
     const byId = id => document.getElementById(id)
@@ -2006,16 +1976,6 @@ footer a:hover {
       }
       if (asrPicker) {
         asrPicker.innerHTML = onlyAsr.length ? onlyAsr.map(m => `<option value="${esc(m.id)}"${m.id === asrActiveId ? ' selected' : ''}>${esc(m.model)}</option>`).join('') : '<option value="">未配置 ASR 模型（默认本机识别）</option>'
-      }
-      const activeModel = models.find(m => m.id === activeId)
-      const activeTts = onlyTts.find(m => m.id === ttsActiveId)
-      const activeAsr = onlyAsr.find(m => m.id === asrActiveId)
-      const modelTag = byId('current-model-tag')
-      if (modelTag) {
-        const llmPart = activeModel ? activeModel.model : '未配置'
-        const ttsPart = activeTts ? `${activeTts.model} (${activeTts.voice})` : '未配置'
-        const asrPart = activeAsr ? activeAsr.model : '本机识别'
-        modelTag.textContent = `LLM: ${llmPart} · TTS: ${ttsPart} · ASR: ${asrPart}`
       }
     }
 
