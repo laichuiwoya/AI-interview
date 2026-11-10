@@ -1,562 +1,2224 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>面试搭子</title>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="专属于你的 AI 语音模拟面试工作台，提供实时 3D 面试官互动、多轮岗位问答与专业复盘分析。">
+  <title>面试搭子 · AI 模拟面试工作台</title>
 <style>
-:root{font-family:"Microsoft YaHei",sans-serif;color:#202c29;background:#f3f1e9}*{box-sizing:border-box}body{margin:0}header{display:flex;justify-content:space-between;align-items:center;padding:24px 6%;border-bottom:1px solid #d9ddd2} .brand{font-weight:800;letter-spacing:.12em}.tag{font-size:12px;color:#65756c;letter-spacing:.12em}main{max-width:1200px;margin:auto;padding:60px 6%} .intro{display:flex;justify-content:space-between;align-items:end;margin-bottom:36px}.eyebrow{color:#49856a;font-size:12px;letter-spacing:.18em;font-weight:bold}h1{font-family:Georgia,"Microsoft YaHei",serif;font-size:clamp(34px,5vw,58px);margin:12px 0;letter-spacing:-.04em} .intro p{color:#68766e;line-height:1.8;margin:0} .number{font:64px Georgia;color:#d5ddd1}.layout{display:grid;grid-template-columns:340px 1fr;gap:20px}.panel{background:#fffefa;border:1px solid #dfe3d9;border-radius:12px;padding:26px}.panel h2{font-size:18px;margin:0 0 8px}.hint{font-size:13px;line-height:1.7;color:#78867c;margin:0 0 25px}label{display:block;font-size:13px;font-weight:bold;margin:22px 0 9px}input,textarea{width:100%;border:1px solid #d8ded3;border-radius:7px;padding:12px;font:inherit;font-size:14px;background:#fafbf7;color:#26372e;resize:vertical}textarea{min-height:180px;line-height:1.7}input:focus,textarea:focus{outline:2px solid #9ac8ae;border-color:transparent}button{border:0;border-radius:7px;background:#285f48;color:white;padding:13px 18px;font:inherit;font-weight:bold;cursor:pointer}button:hover{background:#194b37}button:disabled{opacity:.5;cursor:wait}.start{width:100%;margin-top:20px}.chat{min-height:510px;display:flex;flex-direction:column}.chat-head{display:flex;align-items:center;gap:12px;border-bottom:1px solid #edf0e9;padding-bottom:19px}.avatar{display:grid;place-items:center;border-radius:50%;width:42px;height:42px;background:#dcebe0;color:#285f48;font-weight:bold}.chat-head h2{margin:0;font-size:15px}.chat-head p{margin:5px 0 0;color:#829087;font-size:12px}.messages{flex:1;min-height:270px;max-height:520px;overflow:auto;padding:25px 0}.empty{text-align:center;padding:65px 10px;color:#8b9b8f;line-height:1.8}.bubble{max-width:85%;padding:13px 16px;border-radius:4px 14px 14px 14px;background:#eef3eb;line-height:1.7;font-size:14px;white-space:pre-wrap;margin:0 0 18px}.bubble.user{margin-left:auto;background:#295e48;color:white;border-radius:14px 4px 14px 14px}.composer{display:flex;gap:10px;border-top:1px solid #edf0e9;padding-top:18px}.composer textarea{min-height:50px;height:50px;max-height:130px}.error{color:#ac483b;font-size:13px;line-height:1.5;margin:10px 0 0;min-height:20px}footer{padding:30px 6%;color:#89958a;font-size:12px;display:flex;justify-content:space-between}footer a{color:inherit}@media(max-width:760px){main{padding-top:35px}.layout{grid-template-columns:1fr}.number{display:none}.chat{min-height:450px}.panel{padding:20px}}
-.composer button{flex-shrink:0}.finish{display:block;margin:12px 0 0 auto;background:#e4ece1;color:#285f48}.finish:hover{background:#d6e5d5}.report{border-top:1px solid #dfe3d9;margin-top:22px;padding-top:22px}.report p{white-space:pre-wrap;line-height:1.8;font-size:14px}.report[hidden],button[hidden]{display:none}
-@media(max-width:760px){.chat{min-height:0;scroll-margin-top:12px}.messages{min-height:132px;max-height:330px;padding-block:18px}}
-.voice-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0 0}.voice-tools button{background:#e4ece1;color:#285f48;padding:9px 12px;font-size:13px}.voice-tools button:hover{background:#d6e5d5}.voice-tools button[data-recording="true"]{background:#953f35;color:#fff}.voice-tools label{margin:0;display:flex;align-items:center;gap:6px;color:#435b4c}.voice-tools input{width:auto;margin:0;accent-color:#285f48}.voice-note{min-height:20px;margin:9px 0 0;color:#526b5e;font-size:13px;line-height:1.6}.voice-note[data-error="true"]{color:#9b3a2f}.chat{min-width:0}.bubble,.report p{overflow-wrap:anywhere}.composer textarea{height:76px;min-width:0}.composer button{align-self:end}@media(max-width:480px){.composer button{padding-inline:12px}}
-:root{color:#112448;background:#eff4fb;--campus-blue:#1849a6;--campus-dark:#10337d;--campus-muted:#486187}
-header,.panel,.composer,.report{border-color:#dce5f3}.intro p,.hint,.voice-note,.voice-tools label,.tag,footer{color:var(--campus-muted)}.eyebrow{color:var(--campus-blue)}.number{color:#cbdaf0}.panel{background:#fff}input,textarea{background:#f7faff;color:#112448;border-color:#cddbf0}input:focus,textarea:focus{outline-color:#789ff4}button,.bubble.user{background:var(--campus-blue)}button:hover{background:var(--campus-dark)}.bubble,.finish,.voice-tools button{background:#edf3ff;color:#1c438a}.finish:hover,.voice-tools button:hover{background:#dce9ff}.voice-tools input{accent-color:var(--campus-blue)}.bubble.user{color:white}
-main{max-width:1390px}
-.layout{grid-template-columns:minmax(0,1.23fr) minmax(320px,1fr);grid-template-areas:"figure prepare" "figure chat";align-items:start}
-.prepare{grid-area:prepare}.chat{grid-area:chat;scroll-margin-top:20px}
-.avatar-stage{grid-area:figure;position:sticky;top:20px;min-width:0;overflow:hidden;border:1px solid #42595a;border-radius:12px;background:#172b30;color:#f4f1e7}
-.avatar-view{position:relative;aspect-ratio:4/3;background:#849b9a}
-.avatar-view canvas,.avatar-view img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.avatar-view:has(canvas:not([hidden])) img{visibility:hidden}
-.avatar-corner{position:absolute;z-index:1;top:14px;left:14px;padding:7px 10px;border:1px solid #ffffff38;border-radius:4px;background:#172b30df;color:#f4f1e7;font-size:10px;letter-spacing:.13em;pointer-events:none}
-.avatar-caption{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 14px;align-items:center;padding:17px 20px 19px}
-.avatar-caption span{grid-column:1/-1;color:#adc8bf;font-size:11px;letter-spacing:.12em}
-.avatar-caption h2{margin:0;font-size:23px;line-height:1.35}
-.avatar-caption p{grid-column:1;margin:0;color:#d3e3dc;font-size:13px;line-height:1.5}
-.avatar-actions{grid-column:2;grid-row:2/4;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.avatar-caption button{border:1px solid #a9cbc463;background:#29484b;padding:9px 12px;font-size:12px}
-.avatar-caption button:hover{background:#3a6062}
-.avatar-help{grid-column:1/-1;color:#d3e3dc;margin-top:8px}.avatar-view canvas[data-inspecting="true"]{cursor:grab;touch-action:pan-y}.avatar-view canvas:active{cursor:grabbing}.avatar-view canvas:focus-visible{outline:2px solid #8be4e6;outline-offset:-3px}
-.avatar-stage[data-state="speaking"] .avatar-caption span{color:#b1eed5}
-@media(max-width:760px){.layout{grid-template-columns:minmax(0,1fr);grid-template-areas:"prepare" "figure" "chat"}.avatar-stage{position:relative;top:auto}.avatar-caption{padding:13px 15px 15px}}
-.step{border:1px solid #dce5f3;border-radius:10px;padding:14px 16px;margin-bottom:12px;transition:.2s}
-.step[data-state="active"]{border-color:#789ff4;box-shadow:0 0 0 3px #e3ecff}
-.step[data-state="locked"]{opacity:.5;pointer-events:none}
-.step[data-state="locked"] .step-body{display:none}
-.step-head{display:flex;align-items:center;gap:10px;font-size:14px}
-.step-no{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#edf3ff;color:var(--campus-blue);font-size:12px;font-weight:bold}
-.step[data-state="done"] .step-no{background:var(--campus-blue);color:#fff}
-.step-done{display:none;margin-left:auto;font-style:normal;font-size:12px;color:#2a8a5a}
-.step[data-state="done"] .step-done{display:inline}
-.step-body{margin-top:12px}
-.row{display:flex;gap:8px}.row input{flex:1;min-width:0}
-button.ghost{background:#edf3ff;color:#1c438a;padding:10px 14px;font-size:13px;flex-shrink:0}button.ghost:hover{background:#dce9ff}
-button.link{background:none;color:var(--campus-blue);padding:0;font-size:13px;font-weight:normal}button.link:hover{background:none;text-decoration:underline}
-.role-summary{margin:8px 0 0;font-size:13px;color:var(--campus-muted)}
-.drop{display:block;margin:0;border:1.5px dashed #a9c0e6;border-radius:8px;padding:22px 12px;text-align:center;font-weight:normal;color:var(--campus-muted);cursor:pointer;background:#f7faff;line-height:1.7}
-.drop:hover,.drop[data-over="true"]{border-color:var(--campus-blue);background:#edf3ff}
-.paste{margin-top:10px;font-size:13px}.paste summary{cursor:pointer;color:var(--campus-muted)}.paste textarea{min-height:120px;margin:8px 0}
-.resume-info{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;border-radius:7px;background:#edf3ff;font-size:13px;color:#1c438a;margin-top:10px;overflow-wrap:anywhere}
-.resume-info[hidden],.role-summary[hidden]{display:none}
-.step[data-state="done"] .drop,.step[data-state="done"] .paste{display:none}
-/* 右栏高度与左侧面试官对齐：聊天区不撑高行，消息区内部滚动 */
-@media(min-width:761px){
-  .layout{grid-template-rows:auto minmax(0,1fr);align-items:stretch}
-  .avatar-stage{grid-row:1/3;align-self:start;position:relative;top:auto}
-  .prepare{margin:0}
-  .chat{contain:size;min-height:220px;display:flex;flex-direction:column;overflow:hidden;padding:18px 22px}
-  .chat .messages{flex:1 1 0;min-height:0;max-height:none;padding:12px 0}
-  .chat .empty{padding:24px 10px}
-  .chat .report{overflow:auto;max-height:45%}
+/* Hallmark · shape: app screen · genre: modern-minimal · theme: Cobalt · redesign: full
+ * nav: edge-aligned console bar · signature: 3D AI interviewer viewport and streaming interview console · states: idle, listening, speaking, thinking, recording, transcribing
+ * axes: light/grotesk-sans/cool · posture: restrained · contrast: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P5 H5 E5 S4 R5 V4 · weakest: S, interview cockpit specificity elevated via dedicated 3D chassis and conversational console */
+
+:root {
+  color-scheme: light;
+  --space-3xs: 2px;
+  --space-2xs: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-base: 20px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 40px;
+  --space-3xl: 48px;
+  --space-4xl: 64px;
+
+  --text-2xs: 0.6875rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+
+  --text-display: 1.728rem;
+  --text-section: 1.25rem;
+  --text-title: 1rem;
+  --text-lead: 1rem;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms;
+  --dur-short: 200ms;
+  --dur-long: 400ms;
+
+  --color-error: oklch(52% 0.19 27);
+  --color-error-soft: oklch(95% 0.03 27);
+  --color-success: oklch(50% 0.12 150);
+  --color-success-soft: oklch(95% 0.03 150);
+
+  --container: 1440px;
+  --gutter: 48px;
+  --gap-columns: 24px;
+  --section-gap-s: 32px;
+  --section-gap: 48px;
+  --section-gap-l: 64px;
+
+  --z-base: 1;
+  --z-raised: 10;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-sticky-nav: 300;
+  --z-modal: 400;
+  --z-toast: 500;
+  --z-tooltip: 600;
+
+  --color-paper: oklch(98.6% 0.005 250);
+  --color-paper-pure: oklch(99.6% 0.002 250);
+  --color-paper-2: oklch(96.2% 0.008 252);
+  --color-paper-3: oklch(93% 0.011 252);
+  --color-ink: oklch(21% 0.028 262);
+  --color-ink-2: oklch(36% 0.022 260);
+  --color-muted: oklch(50% 0.018 258);
+  --color-rule: oklch(90% 0.009 252);
+  --color-rule-2: oklch(83% 0.012 252);
+  --color-rule-subtle: oklch(94% 0.006 252);
+
+  --color-graphite: oklch(21% 0.024 262);
+  --color-graphite-2: oklch(26.5% 0.026 262);
+  --color-graphite-3: oklch(16% 0.022 262);
+  --color-graphite-ink: oklch(93% 0.010 250);
+  --color-graphite-muted: oklch(69% 0.022 256);
+  --color-graphite-rule: oklch(32% 0.025 262);
+
+  --color-accent: oklch(52% 0.19 258);
+  --color-accent-hover: oklch(46% 0.20 260);
+  --color-accent-active: oklch(40% 0.21 262);
+  --color-accent-2: oklch(76% 0.13 254);
+  --color-accent-wash: oklch(95% 0.028 256);
+  --color-accent-ink: oklch(98.6% 0.005 250);
+  --color-focus: oklch(52% 0.19 258);
+  --color-accent-deep: oklch(43% 0.2 262);
+  --color-accent-edge: oklch(39% 0.16 260);
+
+  --color-recording: oklch(50% 0.20 25);
+  --color-recording-hover: oklch(44% 0.21 25);
+  --color-recording-ink: oklch(98% 0.005 25);
+  --color-recording-wash: oklch(95% 0.04 25);
+
+  --color-backdrop: oklch(14% 0.02 262 / 0.55);
+
+  --font-display: "Familjen Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-body: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-outlier: "JetBrains Mono", ui-monospace, monospace;
+
+  --radius-card: 12px;
+  --radius-inner: 8px;
+  --radius-input: 8px;
+  --radius-pill: 999px;
+
+  --rule-hair: 1px;
+  --shadow-card: 0 1px 3px oklch(21% 0.028 262 / 0.04), 0 6px 16px -4px oklch(21% 0.028 262 / 0.06);
+  --shadow-modal: 0 16px 40px -12px oklch(14% 0.02 262 / 0.35);
+  --shadow-key: 0 2px 0 0 var(--color-rule-2), 0 4px 6px -2px oklch(21% 0.028 262 / 0.12);
+  --shadow-key-accent: 0 2px 0 0 var(--color-accent-edge), 0 4px 8px -2px oklch(30% 0.12 260 / 0.3);
+  --shadow-key-press: inset 0 1px 2px oklch(21% 0.028 262 / 0.15);
+
+  --tracking-display: -0.02em;
+  --display-weight: 600;
 }
-.voice-tools .finish{margin:0 0 0 auto}
-.step-value{display:none}
-.prepare[data-compact="true"]{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px 14px}
-.prepare[data-compact="true"]>h2,.prepare[data-compact="true"]>.hint,.prepare[data-compact="true"] .step-body,.prepare[data-compact="true"] .step-head strong,.prepare[data-compact="true"] .step-done{display:none}
-.prepare[data-compact="true"] .step{flex:1 1 0;min-width:0;margin:0;padding:7px 10px;box-shadow:none;border-color:#dce5f3}
-.prepare[data-compact="true"] .step-value{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;color:#1c438a}
-.prepare[data-compact="true"] .step-no{flex-shrink:0;width:20px;height:20px;font-size:11px}
-.prepare[data-compact="true"] .start{width:auto;margin:0;padding:9px 14px;font-size:13px}
-.prepare[data-compact="true"] .error{flex-basis:100%;margin:0;min-height:0}
-</style></head><body><header><div class="brand">◒ 面试搭子</div><div class="tag">PRACTICE MAKES PROGRESS</div></header><main><div class="intro"><div><div class="eyebrow">YOUR INTERVIEW PRACTICE SPACE / 01</div><h1>把每一次回答，<br>变成下一次的底气。</h1><p>输入目标岗位、导入简历，开始一场专属于你的模拟面试。</p></div><div class="number">01 /</div></div><div class="layout"><section class="panel prepare"><h2>面试准备</h2><p class="hint">按顺序完成两步后才能开始面试，问题将围绕你的岗位与简历展开。</p>
-<div class="step" id="step-role" data-state="active">
-  <div class="step-head"><span class="step-no">1</span><strong>输入面试岗位</strong><span class="step-value" id="role-value"></span><em class="step-done">已确认</em></div>
-  <div class="step-body">
-    <div class="row"><input id="role" maxlength="200" placeholder="例如：Java 后端开发工程师"><button type="button" id="role-confirm" class="ghost">确认</button></div>
-    <p class="role-summary" id="role-summary" hidden></p>
-  </div>
-</div>
-<div class="step" id="step-resume" data-state="locked">
-  <div class="step-head"><span class="step-no">2</span><strong>导入简历</strong><span class="step-value" id="resume-value"></span><em class="step-done">已导入</em></div>
-  <div class="step-body">
-    <label class="drop" id="drop" for="resume-file">
-      <input type="file" id="resume-file" accept=".pdf,.docx,.txt,.md" hidden>
-      <span id="drop-text">点击或拖拽上传简历<br><small>支持 PDF / DOCX / TXT / MD，最大 5MB</small></span>
-    </label>
-    <details class="paste"><summary>没有文件？直接粘贴简历文本</summary>
-      <textarea id="resume-paste" maxlength="12000" placeholder="粘贴简历内容：教育背景、技能、项目经历、实习经历……"></textarea>
-      <button type="button" id="paste-confirm" class="ghost">使用粘贴内容</button>
-    </details>
-    <div class="resume-info" id="resume-info" hidden><span id="resume-name"></span><button type="button" id="resume-clear" class="link">重新导入</button></div>
-  </div>
-</div>
-<button class="start" id="start" disabled>开始面试 ↗</button><p id="error" class="error" role="alert"></p></section><section class="panel chat"><div id="messages" class="messages" aria-live="polite"><div class="empty">✳<br>你的面试将在这里开始<br><small>完成「输入岗位 → 导入简历」后点击开始</small></div></div><form id="form" class="composer"><textarea id="answer" maxlength="6000" aria-label="你的回答" placeholder="在这里输入你的回答……" disabled></textarea><button id="send" disabled>发送 ↑</button></form>
-<div class="voice-tools" aria-label="语音工具">
-  <button id="read-question" type="button" disabled>朗读本题</button>
-  <button id="record-answer" type="button" disabled>录音回答</button>
-  <button id="retry-transcription" type="button" hidden>重试转写</button>
-  <label><input id="auto-read" type="checkbox" checked> 自动朗读</label>
-  <button id="finish" class="finish" type="button" hidden>提前结束</button>
-</div>
-<p id="voice-note" class="voice-note" role="status">也可以直接输入文字回答。</p>
-<p id="chat-error" class="error" role="alert" hidden></p>
-<section id="report" class="report" hidden>
-  <h2>面试复盘</h2>
-  <p class="hint">可向上滚动回看完整问答。</p>
-  <p id="report-text"></p>
-</section>
-</section><aside id="portrait" class="avatar-stage" data-state="idle">
-  <div class="avatar-corner" aria-hidden="true">面试室 / 候选人视角</div>
-  <div class="avatar-view">
-    <img src="/interviewer-preview.png" alt="左胸佩戴蓝色徽标的面试官，正面坐在桌对面">
-    <canvas id="avatar-canvas" role="img" aria-label="坐姿 3D 面试官" hidden></canvas>
-  </div>
-  <div class="avatar-caption">
-    <span>广应科 · 面试练习</span>
-    <h2>AI 面试官</h2>
-    <p id="status" aria-live="polite">准备就绪 · 项目经历面试</p>
-    <div class="avatar-actions">
-      <button type="button" id="avatar-motion" aria-pressed="false" hidden>演示动作</button>
-      <button type="button" id="avatar-demo" aria-pressed="false" hidden>查看骨架</button>
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { overflow-x: clip; width: 100%; }
+html { scrollbar-color: var(--color-muted) var(--color-paper); scroll-padding-top: var(--space-xl); }
+body { margin: 0; background: var(--color-paper); color: var(--color-ink); font-family: var(--font-body); font-size: var(--text-md); line-height: 1.55; -webkit-font-smoothing: antialiased; caret-color: var(--color-accent); }
+::selection { background: color-mix(in oklab, var(--color-accent) 22%, transparent); color: var(--color-ink); }
+:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.16em; }
+h1, h2, h3 { margin: 0; font-family: var(--font-display); font-weight: var(--display-weight, 600); font-synthesis: none; letter-spacing: var(--tracking-display); line-height: 1.15; overflow-wrap: break-word; min-width: 0; text-wrap: balance; }
+h1 { font-size: var(--text-display); }
+h2 { font-size: var(--text-section); }
+h3 { font-size: var(--text-title); line-height: 1.25; }
+.lead { font-size: var(--text-lead); line-height: 1.5; max-width: 52ch; }
+p { margin: 0; text-wrap: pretty; }
+p:not([class]) { max-width: 65ch; }
+img, video { max-width: 100%; height: auto; display: block; }
+svg { display: block; }
+[hidden] { display: none !important; }
+button, input, select, textarea { font: inherit; }
+.num, .figure, td.num { font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) { *:not(.keep-motion), *:not(.keep-motion)::before, *:not(.keep-motion)::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; } }
+
+
+/* -------------------------------------------------------------
+ * App Shell & Header
+ * ------------------------------------------------------------- */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-paper-pure);
+  border-bottom: var(--rule-hair) solid var(--color-rule);
+}
+
+.brand-group {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+}
+
+.brand {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-lg);
+  color: var(--color-ink);
+  letter-spacing: var(--tracking-display);
+}
+
+.tag {
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.current-model-tag {
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  background: var(--color-paper-2);
+  border: var(--rule-hair) solid var(--color-rule);
+  padding: var(--space-2xs) var(--space-sm);
+  border-radius: var(--radius-pill);
+}
+
+/* -------------------------------------------------------------
+ * Main Workspace Layout
+ * ------------------------------------------------------------- */
+main {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding: var(--space-xl) var(--space-lg);
+}
+
+.intro {
+  margin-bottom: var(--space-lg);
+}
+
+.intro h1 {
+  font-size: var(--text-display);
+  color: var(--color-ink);
+  margin-bottom: var(--space-xs);
+}
+
+.intro p {
+  color: var(--color-muted);
+  font-size: var(--text-md);
+  line-height: 1.5;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(360px, 1fr);
+  grid-template-areas: "figure prepare" "figure chat";
+  gap: var(--space-lg);
+  align-items: start;
+}
+
+@media (min-width: 761px) {
+  .layout {
+    grid-template-rows: auto minmax(0, 1fr);
+    align-items: stretch;
+  }
+  .avatar-stage {
+    grid-row: 1 / 3;
+    align-self: start;
+  }
+  .chat {
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .chat .messages {
+    flex: 1 1 0;
+    min-height: 0;
+    max-height: none;
+  }
+  .chat .report {
+    overflow: auto;
+    max-height: 48%;
+  }
+}
+
+@media (max-width: 760px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "prepare" "figure" "chat";
+  }
+  main {
+    padding-top: var(--space-lg);
+    padding-inline: var(--space-md);
+  }
+}
+
+/* -------------------------------------------------------------
+ * Panels & Surface Architecture
+ * ------------------------------------------------------------- */
+.panel {
+  background: var(--color-paper-pure);
+  border: var(--rule-hair) solid var(--color-rule);
+  border-radius: var(--radius-card);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.panel h2 {
+  font-size: var(--text-section);
+  color: var(--color-ink);
+  margin-bottom: var(--space-2xs);
+}
+
+.hint {
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+  line-height: 1.5;
+  margin-bottom: var(--space-md);
+}
+
+/* -------------------------------------------------------------
+ * 3D Avatar Stage (Graphite Studio Chassis)
+ * ------------------------------------------------------------- */
+.avatar-stage {
+  grid-area: figure;
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border: var(--rule-hair) solid var(--color-graphite-rule);
+  border-radius: var(--radius-card);
+  background: var(--color-graphite);
+  color: var(--color-graphite-ink);
+  box-shadow: var(--shadow-card);
+}
+
+.avatar-view {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background: var(--color-graphite-3);
+}
+
+.avatar-view canvas,
+.avatar-view img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-view:has(canvas:not([hidden])) img {
+  visibility: hidden;
+}
+
+.avatar-corner {
+  position: absolute;
+  z-index: 2;
+  top: var(--space-sm);
+  left: var(--space-sm);
+  padding: var(--space-2xs) var(--space-xs);
+  border: var(--rule-hair) solid var(--color-graphite-rule);
+  border-radius: var(--radius-inner);
+  background: var(--color-graphite-2);
+  color: var(--color-graphite-ink);
+  font-size: var(--text-xs);
+  pointer-events: none;
+}
+
+.avatar-caption {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-2xs) var(--space-md);
+  align-items: center;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-graphite);
+  border-top: var(--rule-hair) solid var(--color-graphite-rule);
+}
+
+.avatar-caption h2 {
+  margin: 0;
+  font-size: var(--text-section);
+  color: var(--color-graphite-ink);
+}
+
+.avatar-caption p {
+  grid-column: 1;
+  margin: 0;
+  color: var(--color-graphite-muted);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+}
+
+.avatar-actions {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.avatar-caption button {
+  border: var(--rule-hair) solid var(--color-graphite-rule);
+  background: transparent;
+  color: var(--color-graphite-ink);
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--text-xs);
+}
+
+.avatar-caption button:hover {
+  background: var(--color-graphite-2);
+  border-color: var(--color-graphite-muted);
+}
+
+.avatar-help {
+  grid-column: 1 / -1;
+  color: var(--color-graphite-muted);
+  margin-top: var(--space-xs);
+  font-size: var(--text-xs);
+}
+
+.avatar-view canvas[data-inspecting="true"] {
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.avatar-view canvas:active {
+  cursor: grabbing;
+}
+
+.avatar-view canvas:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+
+/* -------------------------------------------------------------
+ * Preparation Section (Step Workflow)
+ * ------------------------------------------------------------- */
+.prepare {
+  grid-area: prepare;
+}
+
+.step {
+  border: var(--rule-hair) solid var(--color-rule);
+  border-radius: var(--radius-inner);
+  padding: var(--space-md);
+  margin-bottom: var(--space-sm);
+  background: var(--color-paper);
+  transition: border-color var(--dur-short) var(--ease-out), background-color var(--dur-short) var(--ease-out), box-shadow var(--dur-short) var(--ease-out);
+}
+
+.step[data-state="active"] {
+  border-color: var(--color-accent);
+  background: var(--color-paper-pure);
+  box-shadow: 0 0 0 3px var(--color-accent-wash);
+}
+
+.step[data-state="locked"] {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.step[data-state="locked"] .step-body {
+  display: none;
+}
+
+.step-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--text-sm);
+  color: var(--color-ink);
+}
+
+.step-no {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-pill);
+  background: var(--color-paper-3);
+  color: var(--color-ink);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.step[data-state="active"] .step-no {
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+}
+
+.step[data-state="done"] .step-no {
+  background: var(--color-success);
+  color: var(--color-paper-pure);
+}
+
+.step-done {
+  display: none;
+  margin-left: auto;
+  font-style: normal;
+  font-size: var(--text-xs);
+  color: var(--color-success);
+  font-weight: 500;
+}
+
+.step[data-state="done"] .step-done {
+  display: inline;
+}
+
+.step-body {
+  margin-top: var(--space-sm);
+}
+
+.row {
+  display: flex;
+  gap: var(--space-xs);
+  align-items: center;
+}
+
+.row input {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.role-summary {
+  margin: var(--space-xs) 0 0;
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+}
+
+/* File Upload & Paste */
+.drop {
+  display: block;
+  margin: 0;
+  border: 1.5px dashed var(--color-rule-2);
+  border-radius: var(--radius-inner);
+  padding: var(--space-lg) var(--space-md);
+  text-align: center;
+  font-weight: normal;
+  color: var(--color-muted);
+  cursor: pointer;
+  background: var(--color-paper);
+  line-height: 1.5;
+  transition: border-color var(--dur-short) var(--ease-out), background-color var(--dur-short) var(--ease-out);
+}
+
+.drop:hover,
+.drop[data-over="true"] {
+  border-color: var(--color-accent);
+  background: var(--color-accent-wash);
+}
+
+.drop small {
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+}
+
+.paste {
+  margin-top: var(--space-sm);
+  font-size: var(--text-sm);
+}
+
+.paste summary {
+  cursor: pointer;
+  color: var(--color-muted);
+  padding: var(--space-2xs) 0;
+}
+
+.paste summary:hover {
+  color: var(--color-accent);
+}
+
+.paste textarea {
+  min-height: 120px;
+  margin: var(--space-xs) 0;
+}
+
+.resume-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-inner);
+  background: var(--color-paper-2);
+  border: var(--rule-hair) solid var(--color-rule);
+  font-size: var(--text-sm);
+  color: var(--color-ink);
+  margin-top: var(--space-xs);
+  overflow-wrap: break-word;
+}
+
+.step[data-state="done"] .drop,
+.step[data-state="done"] .paste {
+  display: none;
+}
+
+.start {
+  width: 100%;
+  margin-top: var(--space-md);
+  min-height: 44px;
+}
+
+/* Compact Mode for Preparation Bar */
+.step-value {
+  display: none;
+}
+
+.prepare[data-compact="true"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+}
+
+.prepare[data-compact="true"] > h2,
+.prepare[data-compact="true"] > .hint,
+.prepare[data-compact="true"] .step-body,
+.prepare[data-compact="true"] .step-head strong,
+.prepare[data-compact="true"] .step-done {
+  display: none;
+}
+
+.prepare[data-compact="true"] .step {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+  padding: var(--space-xs) var(--space-sm);
+  box-shadow: none;
+  border-color: var(--color-rule);
+}
+
+.prepare[data-compact="true"] .step-value {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-sm);
+  color: var(--color-accent);
+  font-weight: 500;
+}
+
+.prepare[data-compact="true"] .step-no {
+  width: 20px;
+  height: 20px;
+  font-size: var(--text-2xs);
+}
+
+.prepare[data-compact="true"] .start {
+  width: auto;
+  margin: 0;
+  padding: var(--space-xs) var(--space-md);
+  min-height: 36px;
+  font-size: var(--text-sm);
+}
+
+.prepare[data-compact="true"] .error {
+  flex-basis: 100%;
+  margin: 0;
+  min-height: 0;
+}
+
+/* -------------------------------------------------------------
+ * Interview Chat Console
+ * ------------------------------------------------------------- */
+.chat {
+  grid-area: chat;
+  min-width: 0;
+  scroll-margin-top: var(--space-lg);
+}
+
+.messages {
+  flex: 1 1 0;
+  min-height: 240px;
+  max-height: 520px;
+  overflow-y: auto;
+  padding: var(--space-md) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.empty {
+  text-align: center;
+  padding: var(--space-2xl) var(--space-md);
+  color: var(--color-muted);
+  line-height: 1.6;
+}
+
+.bubble {
+  max-width: 82%;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-inner);
+  background: var(--color-paper-2);
+  color: var(--color-ink);
+  line-height: 1.6;
+  font-size: var(--text-sm);
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  border: var(--rule-hair) solid var(--color-rule);
+}
+
+.bubble.assistant {
+  align-self: flex-start;
+  border-top-left-radius: var(--space-3xs);
+}
+
+.bubble.user {
+  align-self: flex-end;
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  border-color: var(--color-accent-edge);
+  border-top-right-radius: var(--space-3xs);
+}
+
+.composer {
+  display: flex;
+  gap: var(--space-xs);
+  border-top: var(--rule-hair) solid var(--color-rule);
+  padding-top: var(--space-md);
+}
+
+.composer textarea {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 64px;
+  min-height: 64px;
+  max-height: 140px;
+  resize: vertical;
+}
+
+.composer button {
+  align-self: flex-end;
+  flex-shrink: 0;
+  min-height: 40px;
+}
+
+.voice-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  align-items: center;
+  margin-top: var(--space-sm);
+}
+
+.voice-tools label {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--color-ink-2);
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.voice-tools input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+  accent-color: var(--color-accent);
+}
+
+.voice-tools button[data-recording="true"] {
+  border-color: var(--color-recording);
+  color: var(--color-recording);
+  background: transparent;
+}
+
+.voice-tools .finish {
+  margin-left: auto;
+}
+
+.voice-note {
+  min-height: 20px;
+  margin-top: var(--space-xs);
+  color: var(--color-muted);
+  font-size: var(--text-xs);
+  line-height: 1.4;
+}
+
+.voice-note[data-error="true"] {
+  color: var(--color-error);
+}
+
+.error {
+  color: var(--color-error);
+  font-size: var(--text-xs);
+  line-height: 1.4;
+  margin-top: var(--space-xs);
+  min-height: 20px;
+}
+
+.report {
+  border-top: var(--rule-hair) solid var(--color-rule);
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+}
+
+.report h2 {
+  font-size: var(--text-section);
+  color: var(--color-ink);
+  margin-bottom: var(--space-2xs);
+}
+
+.report p {
+  white-space: pre-wrap;
+  line-height: 1.6;
+  font-size: var(--text-sm);
+}
+
+/* -------------------------------------------------------------
+ * Form Controls & Input Elements
+ * ------------------------------------------------------------- */
+input,
+textarea,
+select {
+  width: 100%;
+  border: var(--rule-hair) solid var(--color-muted);
+  border-radius: var(--radius-input);
+  padding: var(--space-xs) var(--space-sm);
+  font: inherit;
+  font-size: var(--text-sm);
+  background: var(--color-paper-pure);
+  color: var(--color-ink);
+  line-height: 1.5;
+  transition: border-color var(--dur-short) var(--ease-out), box-shadow var(--dur-short) var(--ease-out);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--rule-hair) solid var(--color-rule-2);
+  border-radius: var(--radius-input);
+  background: var(--color-paper-2);
+  color: var(--color-ink);
+  padding: var(--space-xs) var(--space-md);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: var(--shadow-key);
+  transition: transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out), background-color var(--dur-short) var(--ease-out);
+}
+
+button:hover {
+  background: var(--color-paper-3);
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(1px);
+  box-shadow: var(--shadow-key-press);
+}
+
+button:disabled,
+input:disabled,
+textarea:disabled,
+select:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  background: var(--color-paper-3);
+  color: var(--color-muted);
+  border-color: var(--color-rule);
+  box-shadow: none;
+  transform: none;
+}
+
+button.btn-primary,
+button.start {
+  background: var(--color-accent);
+  border-color: var(--color-accent-edge);
+  color: var(--color-accent-ink);
+  box-shadow: var(--shadow-key-accent);
+}
+
+button.btn-primary:hover,
+button.start:hover {
+  background: var(--color-accent-hover);
+}
+
+button.btn-ghost {
+  background: var(--color-paper-2);
+  border-color: var(--color-rule);
+  color: var(--color-ink);
+}
+
+button.btn-ghost:hover {
+  background: var(--color-paper-3);
+}
+
+button.btn-link {
+  background: none;
+  border: 0;
+  box-shadow: none;
+  color: var(--color-accent);
+  padding: 0;
+  font-size: var(--text-sm);
+  font-weight: normal;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+button.btn-link:hover {
+  color: var(--color-accent-hover);
+  background: none;
+  transform: none;
+}
+
+/* -------------------------------------------------------------
+ * Modals & Dialog Windows
+ * ------------------------------------------------------------- */
+dialog.settings {
+  border: var(--rule-hair) solid var(--color-rule);
+  border-radius: var(--radius-card);
+  padding: var(--space-lg);
+  width: min(460px, 92vw);
+  background: var(--color-paper-pure);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-card);
+}
+
+dialog.settings::backdrop {
+  background: var(--color-backdrop);
+}
+
+dialog.settings h2 {
+  margin-bottom: var(--space-2xs);
+  font-size: var(--text-section);
+}
+
+dialog.settings label {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  margin: var(--space-sm) 0 var(--space-2xs);
+  color: var(--color-ink-2);
+}
+
+.settings-actions {
+  display: flex;
+  gap: var(--space-xs);
+  margin-top: var(--space-lg);
+  justify-content: flex-end;
+}
+
+.settings-msg {
+  min-height: 20px;
+  font-size: var(--text-xs);
+  margin-top: var(--space-xs);
+  color: var(--color-muted);
+}
+
+.settings-msg[data-error="true"] {
+  color: var(--color-error);
+}
+
+.model-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  border: var(--rule-hair) solid var(--color-rule);
+  border-radius: var(--radius-inner);
+  padding: var(--space-sm);
+  margin-top: var(--space-xs);
+  background: var(--color-paper);
+}
+
+.model-item.on {
+  border-color: var(--color-accent);
+  background: var(--color-accent-wash);
+}
+
+.model-item .info {
+  flex: 1 1 0;
+  min-width: 0;
+  font-size: var(--text-sm);
+  overflow: hidden;
+}
+
+.model-item .info b {
+  display: block;
+  font-size: var(--text-sm);
+  color: var(--color-ink);
+}
+
+.model-item .info span {
+  color: var(--color-muted);
+  font-size: var(--text-xs);
+  word-break: break-all;
+}
+
+.model-item button {
+  padding: var(--space-2xs) var(--space-xs);
+  font-size: var(--text-xs);
+}
+
+.model-empty {
+  margin-top: var(--space-sm);
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+}
+
+.model-section {
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: var(--rule-hair) solid var(--color-rule);
+}
+
+.model-section:first-of-type {
+  margin-top: var(--space-sm);
+  padding-top: 0;
+  border-top: 0;
+}
+
+.model-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.model-section-head h3 {
+  font-size: var(--text-sm);
+  color: var(--color-ink);
+}
+
+/* -------------------------------------------------------------
+ * Footer
+ * ------------------------------------------------------------- */
+footer {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding: var(--space-lg) var(--space-lg);
+  border-top: var(--rule-hair) solid var(--color-rule);
+  color: var(--color-muted);
+  font-size: var(--text-xs);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+footer a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+footer a:hover {
+  color: var(--color-accent);
+}
+</style>
+</head>
+<body>
+  <header>
+    <div class="brand-group">
+      <div class="brand">面试搭子</div>
+      <div class="tag">AI 语音模拟面试</div>
     </div>
-    <small class="avatar-help" id="avatar-help" hidden>拖动画面或按左右方向键，可查看模型的侧面和背面。</small>
-  </div>
-</aside></div></main><footer><span>面试搭子 · 每一次练习都算数</span><a href="https://deerflow.tech" target="_blank" rel="noopener noreferrer">Created By Deerflow</a></footer><script>
-const byId = id => document.getElementById(id)
-const role = byId('role')
-const roleConfirm = byId('role-confirm')
-const roleSummary = byId('role-summary')
-const stepRole = byId('step-role')
-const stepResume = byId('step-resume')
-const resumeFile = byId('resume-file')
-const drop = byId('drop')
-const dropText = byId('drop-text')
-const resumePaste = byId('resume-paste')
-const pasteConfirm = byId('paste-confirm')
-const resumeInfo = byId('resume-info')
-const resumeName = byId('resume-name')
-const resumeClear = byId('resume-clear')
-let confirmedRole = ''
-let resumeText = ''
-let parsing = false
-const MAX_RESUME_BYTES = 5 * 1024 * 1024
-const DROP_DEFAULT = dropText.innerHTML
-const start = byId('start')
-const answer = byId('answer')
-const send = byId('send')
-const finish = byId('finish')
-const messages = byId('messages')
-const error = byId('error')
-const chatError = byId('chat-error')
-const status = byId('status')
-const report = byId('report')
-const reportText = byId('report-text')
-const empty = messages.firstElementChild
-const portrait = byId('portrait')
-const readQuestion = byId('read-question')
-const recordAnswer = byId('record-answer')
-const retryTranscription = byId('retry-transcription')
-const autoRead = byId('auto-read')
-const voiceNote = byId('voice-note')
-const synthesis = window.speechSynthesis
-const canRecord = Boolean(navigator.mediaDevices?.getUserMedia && window.MediaRecorder)
-const RECORD_LIMIT_SECONDS = 90
-let history = []
-let context = null
-let questionLimit = 5
-let busy = false
-let ended = false
-let utterance = null
-let speaking = false
-let speechTimer
-let voiceState = 'idle'
-let recorder = null
-let retryAudio = null
+    <div class="header-actions">
+      <span id="current-model-tag" class="current-model-tag">正在获取模型…</span>
+      <button type="button" id="open-settings" class="btn btn-ghost">模型配置</button>
+      <button type="button" id="open-interviewer" class="btn btn-ghost">面试官设置</button>
+    </div>
+  </header>
 
-function showVoiceNote(text, isError = false) {
-  voiceNote.textContent = text
-  voiceNote.dataset.error = isError
-}
+  <main>
+    <div class="intro">
+      <h1>把每一次回答，变成下一次的底气</h1>
+      <p>输入目标岗位、导入简历，开始一场专属于你的模拟面试。</p>
+    </div>
 
-function bubble(content, speaker) {
-  const element = document.createElement('div')
-  element.className = 'bubble ' + speaker
-  element.textContent = content
-  messages.appendChild(element)
-  messages.scrollTop = messages.scrollHeight
-}
+    <div class="layout">
+      <section class="panel prepare">
+        <h2>面试准备</h2>
+        <p class="hint">按顺序完成两步后才能开始面试，问题将围绕你的岗位与简历展开。</p>
 
-function render() {
-  const completed = Math.floor(history.length / 2)
-  const voiceBusy = voiceState !== 'idle'
-  const canAnswer = Boolean(context && !ended && history.length % 2)
-  const locked = busy || Boolean(context && !ended)
-  stepRole.dataset.state = confirmedRole ? 'done' : 'active'
-  stepResume.dataset.state = !confirmedRole ? 'locked' : resumeText ? 'done' : 'active'
-  role.disabled = locked
-  roleConfirm.disabled = locked
-  roleConfirm.textContent = confirmedRole ? '修改' : '确认'
-  resumeClear.hidden = locked
-  byId('role-value').textContent = confirmedRole
-  byId('resume-value').textContent = resumeName.textContent.replace(/^✓\s*/, '')
-  document.querySelector('.prepare').dataset.compact = Boolean(context)
-  start.disabled = busy || voiceBusy || parsing || !confirmedRole || !resumeText
-  start.textContent = context ? '重新开始 ↻' : !confirmedRole ? '请先输入面试岗位' : !resumeText ? '请先导入简历' : '开始面试 ↗'
-  answer.disabled = busy || !canAnswer
-  send.disabled = answer.disabled || voiceBusy
-  send.textContent = context && completed === questionLimit - 1 ? '提交最后一题' : '发送 ↑'
-  finish.hidden = completed === 0 || !report.hidden
-  finish.disabled = busy || voiceBusy
-  finish.textContent = ended ? '重试生成复盘' : '提前结束'
-  if (!context) {
-    status.textContent = confirmedRole ? `准备就绪 · ${confirmedRole}` : '准备就绪 · 请先输入岗位'
-  } else if (ended) {
-    const label = busy ? '正在生成复盘…' : '面试已结束'
-    status.textContent = `${label} · 已回答 ${completed} / ${questionLimit} 题`
-  } else {
-    const progress = `第 ${completed + 1} / ${questionLimit} 题`
-    const activity = busy ? '面试官思考中…' :
-      voiceState === 'recording' ? '正在倾听' :
-      voiceState === 'transcribing' ? '正在转写…' :
-      speaking ? '面试官正在提问' : '等待回答'
-    status.textContent = `${progress} · ${activity}`
-  }
-  portrait.dataset.state = busy || voiceState === 'transcribing' ? 'thinking' :
-    speaking ? 'speaking' : canAnswer ? 'listening' : 'idle'
-  readQuestion.disabled = !synthesis || !canAnswer || busy || voiceBusy
-  readQuestion.textContent = utterance ? '停止朗读' : '朗读本题'
-  recordAnswer.disabled = !canRecord || !canAnswer || busy ||
-    (voiceBusy && voiceState !== 'recording')
-  recordAnswer.dataset.recording = voiceState === 'recording'
-  if (voiceState !== 'recording') recordAnswer.textContent = '录音回答'
-  retryTranscription.hidden = !retryAudio || !canAnswer
-  retryTranscription.disabled = busy || voiceBusy
-  autoRead.disabled = !synthesis
-}
+        <div class="step" id="step-role" data-state="active">
+          <div class="step-head">
+            <span class="step-no">1</span>
+            <strong>输入面试岗位</strong>
+            <span class="step-value" id="role-value"></span>
+            <em class="step-done">已确认</em>
+          </div>
+          <div class="step-body">
+            <div class="row">
+              <input id="role" maxlength="200" placeholder="例如：Java 后端开发工程师">
+              <button type="button" id="role-confirm" class="btn btn-ghost">确认</button>
+            </div>
+            <p class="role-summary" id="role-summary" hidden></p>
+          </div>
+        </div>
 
-function stopSpeech() {
-  clearTimeout(speechTimer)
-  const wasQueued = utterance !== null
-  utterance = null
-  speaking = false
-  if (wasQueued) synthesis.cancel()
-  render()
-}
+        <div class="step" id="step-resume" data-state="locked">
+          <div class="step-head">
+            <span class="step-no">2</span>
+            <strong>导入简历</strong>
+            <span class="step-value" id="resume-value"></span>
+            <em class="step-done">已导入</em>
+          </div>
+          <div class="step-body">
+            <label class="drop" id="drop" for="resume-file">
+              <input type="file" id="resume-file" accept=".pdf,.docx,.txt,.md" hidden>
+              <span id="drop-text">点击或拖拽上传简历<br><small>支持 pdf, docx, txt, md 格式（最大 5MB）</small></span>
+            </label>
+            <details class="paste">
+              <summary>没有文件？直接粘贴简历文本</summary>
+              <textarea id="resume-paste" maxlength="12000" placeholder="粘贴简历内容：教育背景、技能、项目经历、实习经历……"></textarea>
+              <button type="button" id="paste-confirm" class="btn btn-ghost">使用粘贴内容</button>
+            </details>
+            <div class="resume-info" id="resume-info" hidden>
+              <span id="resume-name"></span>
+              <button type="button" id="resume-clear" class="btn-link">重新导入</button>
+            </div>
+          </div>
+        </div>
 
-function speakQuestion() {
-  const question = history.at(-1)
-  if (!synthesis || question?.role !== 'assistant' || ended) return
-  stopSpeech()
-  const speech = new SpeechSynthesisUtterance(question.content)
-  speech.lang = 'zh-CN'
-  const voices = synthesis.getVoices().filter(voice => /^zh[-_]CN$/i.test(voice.lang))
-  speech.voice = voices.find(voice => voice.localService) || voices[0] || null
-  utterance = speech
-  speech.onstart = () => {
-    if (utterance !== speech) return
-    clearTimeout(speechTimer)
-    speaking = true
-    render()
-  }
-  speech.onend = () => {
-    if (utterance === speech) stopSpeech()
-  }
-  const failed = () => {
-    if (utterance !== speech) return
-    stopSpeech()
-    showVoiceNote('朗读暂时不可用。可点击重播，或直接阅读上方题目。', true)
-  }
-  speech.onerror = failed
-  speechTimer = setTimeout(failed, 6000)
-  try {
-    synthesis.speak(speech)
-  } catch {
-    failed()
-  }
-  render()
-}
+        <button class="start btn btn-primary" id="start" disabled>开始面试</button>
+        <p id="error" class="error" role="alert"></p>
+      </section>
 
-async function transcribeAudio(audio) {
-  voiceState = 'transcribing'
-  retryAudio = null
-  showVoiceNote('正在本机转写录音，请稍候…')
-  render()
-  try {
-    const response = await fetch('/transcribe', {
-      method: 'POST',
-      body: audio,
-      signal: AbortSignal.timeout(120000)
-    })
-    const result = await response.json()
-    if (!response.ok) {
-      if (response.status >= 500) retryAudio = audio
-      showVoiceNote(result.error || '转写失败，请重录。', true)
-      return
+      <section class="panel chat" id="chat" hidden>
+        <div id="messages" class="messages" aria-live="polite">
+          <div class="empty">面试问答将在此展开<br><small>完成「输入岗位 → 导入简历」后点击开始</small></div>
+        </div>
+        <form id="form" class="composer">
+          <textarea id="answer" maxlength="6000" aria-label="你的回答" placeholder="在这里输入你的回答……" disabled></textarea>
+          <button id="send" class="btn btn-primary" disabled>发送</button>
+        </form>
+        <div class="voice-tools" aria-label="语音工具">
+          <button id="read-question" class="btn btn-ghost" type="button" disabled>朗读本题</button>
+          <button id="record-answer" class="btn btn-ghost" type="button" disabled>录音回答</button>
+          <button id="retry-transcription" class="btn btn-ghost" type="button" hidden>重试转写</button>
+          <label><input id="auto-read" type="checkbox" checked> 自动朗读</label>
+          <button id="finish" class="btn btn-ghost finish" type="button" hidden>提前结束</button>
+        </div>
+        <p id="voice-note" class="voice-note" role="status">也可以直接输入文字回答。</p>
+        <p id="chat-error" class="error" role="alert" hidden></p>
+        <section id="report" class="report" hidden>
+          <h2>面试复盘</h2>
+          <p class="hint">可向上滚动回看完整问答。</p>
+          <p id="report-text"></p>
+        </section>
+      </section>
+
+      <aside id="portrait" class="avatar-stage" data-state="idle">
+        <div class="avatar-corner" aria-hidden="true">面试室 · 候选人视角</div>
+        <div class="avatar-view">
+          <img src="./interviewer-preview.png" alt="坐姿 3D 面试官预览图">
+          <canvas id="avatar-canvas" role="img" aria-label="坐姿 3D 面试官" hidden></canvas>
+        </div>
+        <div class="avatar-caption">
+          <h2>AI 面试官</h2>
+          <p id="status" aria-live="polite">准备就绪 · 项目经历面试</p>
+          <div class="avatar-actions">
+            <button type="button" id="avatar-motion" aria-pressed="false" hidden>演示动作</button>
+            <button type="button" id="avatar-demo" aria-pressed="false" hidden>查看骨架</button>
+          </div>
+          <small class="avatar-help" id="avatar-help" hidden>拖动画面或按左右方向键，可查看模型的侧面和背面。</small>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <dialog id="interviewer-dlg" class="settings">
+    <h2>面试官设置</h2>
+    <p class="hint">为 AI 面试官选择当前使用的对话模型、TTS 语音合成与 ASR 语音识别模型。</p>
+    <label for="interviewer-model">对话模型（LLM）</label>
+    <select id="interviewer-model"><option value="">未配置对话模型</option></select>
+    <label for="voice-model">语音合成模型（TTS）</label>
+    <select id="voice-model"><option value="">未配置 TTS 模型</option></select>
+    <label for="asr-model">语音识别模型（ASR）</label>
+    <select id="asr-model"><option value="">未配置 ASR 模型（默认本机识别）</option></select>
+    <p class="settings-msg" id="iv-msg" role="status"></p>
+    <div class="settings-actions">
+      <button type="button" class="btn btn-ghost" id="iv-manage">管理模型</button>
+      <button type="button" class="btn btn-ghost" id="iv-close">取消</button>
+      <button type="button" class="btn btn-primary" id="iv-save">确定</button>
+    </div>
+  </dialog>
+
+  <dialog id="model-list" class="settings">
+    <h2>模型配置</h2>
+    <p class="hint">分别管理对话大模型与语音模型（TTS / ASR），选择“使用”即可切换当前生效模型。</p>
+    <div class="model-section">
+      <div class="model-section-head">
+        <h3>对话模型（LLM）</h3>
+        <button type="button" class="btn btn-ghost" id="add-model">新增对话模型</button>
+      </div>
+      <div id="model-items"></div>
+    </div>
+    <div class="model-section">
+      <div class="model-section-head">
+        <h3>语音模型（TTS / ASR）</h3>
+        <button type="button" class="btn btn-ghost" id="add-tts-model">新增语音模型</button>
+      </div>
+      <div id="tts-model-items"></div>
+    </div>
+    <div class="settings-actions">
+      <button type="button" class="btn btn-ghost" id="list-close">关闭</button>
+    </div>
+  </dialog>
+
+  <dialog id="settings" class="settings">
+    <form method="dialog" id="settings-form">
+      <h2 id="cfg-title">新增对话模型</h2>
+      <p class="hint">通过 LangChain（ChatOpenAI）调用，支持所有兼容 OpenAI 协议的服务。密钥仅保存在本机 api_config.json。</p>
+      <label for="cfg-provider">服务商</label>
+      <select id="cfg-provider">
+        <option value="deepseek">DeepSeek</option>
+        <option value="openai">OpenAI</option>
+        <option value="qwen">通义千问（阿里云百炼）</option>
+        <option value="moonshot">Moonshot（Kimi）</option>
+        <option value="zhipu">智谱 GLM</option>
+        <option value="custom">自定义</option>
+      </select>
+      <label for="cfg-url">接口地址（Base URL）</label>
+      <input id="cfg-url" placeholder="例如：https://你的中转站域名/v1">
+      <label for="cfg-model">模型名称</label>
+      <input id="cfg-model" placeholder="deepseek-chat">
+      <label for="cfg-key">API Key</label>
+      <input id="cfg-key" type="password" autocomplete="off" placeholder="留空则保持已保存的密钥">
+      <label for="cfg-temp">温度（0 到 2）</label>
+      <input id="cfg-temp" type="number" min="0" max="2" step="0.1" value="0.7">
+      <p class="settings-msg" id="cfg-msg" role="status"></p>
+      <div class="settings-actions">
+        <button type="button" class="btn btn-ghost" id="cfg-test">测试连接</button>
+        <button type="button" class="btn btn-ghost" id="cfg-close">返回</button>
+        <button type="button" class="btn btn-primary" id="cfg-save">保存</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="tts-settings" class="settings">
+    <form method="dialog" id="tts-settings-form">
+      <h2 id="tts-cfg-title">新增语音模型</h2>
+      <p class="hint">支持配置 TTS（面试官语音朗读）或 ASR（候选人录音转文字）。密钥仅保存在本机 api_config.json。</p>
+      <label for="tts-kind">模型类型</label>
+      <select id="tts-kind">
+        <option value="tts">TTS（语音合成 · 面试官朗读）</option>
+        <option value="asr">ASR（语音识别 · 录音转文字）</option>
+      </select>
+      <label for="tts-provider">服务商</label>
+      <select id="tts-provider">
+        <option value="qwen">通义千问（阿里云百炼）</option>
+        <option value="openai">OpenAI</option>
+        <option value="siliconflow">SiliconFlow（硅基流动）</option>
+        <option value="custom">自定义</option>
+      </select>
+      <label for="tts-url">接口地址（Base URL）</label>
+      <input id="tts-url" placeholder="例如：https://dashscope.aliyuncs.com/compatible-mode/v1">
+      <label for="tts-model">模型名称</label>
+      <input id="tts-model" placeholder="例如：qwen3-tts-flash 或 qwen3-asr-flash">
+      <div id="tts-voice-group">
+        <label for="tts-voice-preset">推荐音色快捷选择</label>
+        <select id="tts-voice-preset">
+          <option value="Ethan">Ethan · 晨煦（沉稳专业男声）</option>
+          <option value="Cherry">Cherry · 芊悦（阳光亲和女声）</option>
+          <option value="Chelsie">Chelsie · 千雪（温和知性女声）</option>
+          <option value="Serena">Serena · 苏瑶（成熟干练女声）</option>
+          <option value="alloy">alloy（OpenAI 中性稳重）</option>
+          <option value="nova">nova（OpenAI 自然女声）</option>
+          <option value="onyx">onyx（OpenAI 浑厚男声）</option>
+          <option value="custom">手动输入其他音色代号</option>
+        </select>
+        <label for="tts-voice">音色代号（Voice）</label>
+        <input id="tts-voice" placeholder="Ethan" value="Ethan">
+      </div>
+      <label for="tts-key">API Key</label>
+      <input id="tts-key" type="password" autocomplete="off" placeholder="请输入 API Key">
+      <p class="settings-msg" id="tts-cfg-msg" role="status"></p>
+      <div class="settings-actions">
+        <button type="button" class="btn btn-ghost" id="tts-cfg-test">试听测试</button>
+        <button type="button" class="btn btn-ghost" id="tts-cfg-close">返回</button>
+        <button type="button" class="btn btn-primary" id="tts-cfg-save">保存</button>
+      </div>
+    </form>
+  </dialog>
+
+  <footer>
+    <span>面试搭子 · 每一次练习都算数</span>
+    <a href="https://deerflow.tech" target="_blank" rel="noopener noreferrer">Created By Deerflow</a>
+  </footer>
+
+  <script>
+    const byId = id => document.getElementById(id)
+    const role = byId('role')
+    const roleConfirm = byId('role-confirm')
+    const roleSummary = byId('role-summary')
+    const stepRole = byId('step-role')
+    const stepResume = byId('step-resume')
+    const resumeFile = byId('resume-file')
+    const drop = byId('drop')
+    const dropText = byId('drop-text')
+    const resumePaste = byId('resume-paste')
+    const pasteConfirm = byId('paste-confirm')
+    const resumeInfo = byId('resume-info')
+    const resumeName = byId('resume-name')
+    const resumeClear = byId('resume-clear')
+    let confirmedRole = ''
+    let resumeText = ''
+    let parsing = false
+    const MAX_RESUME_BYTES = 5 * 1024 * 1024
+    const DROP_DEFAULT = dropText.innerHTML
+    const start = byId('start')
+    const answer = byId('answer')
+    const send = byId('send')
+    const finish = byId('finish')
+    const messages = byId('messages')
+    const error = byId('error')
+    const chatError = byId('chat-error')
+    const status = byId('status')
+    const report = byId('report')
+    const reportText = byId('report-text')
+    const empty = messages.firstElementChild
+    const portrait = byId('portrait')
+    const readQuestion = byId('read-question')
+    const recordAnswer = byId('record-answer')
+    const retryTranscription = byId('retry-transcription')
+    const autoRead = byId('auto-read')
+    const voiceNote = byId('voice-note')
+    const canRecord = Boolean(navigator.mediaDevices?.getUserMedia && window.MediaRecorder)
+    const RECORD_LIMIT_SECONDS = 90
+    let history = []
+    let context = null
+    let questionLimit = 5
+    let busy = false
+    let ended = false
+    let audioPlayer = null
+    let audioUrl = null
+    let ttsAbort = null
+    let synthesizing = false
+    let speaking = false
+    let voiceState = 'idle'
+    let recorder = null
+    let retryAudio = null
+    let editingId = '', models = [], activeId = ''
+    let editingTtsId = '', ttsModels = [], ttsActiveId = '', asrActiveId = ''
+
+    function showVoiceNote(text, isError = false) {
+      voiceNote.textContent = text
+      voiceNote.dataset.error = isError
     }
-    answer.value = [answer.value.trimEnd(), result.text].filter(Boolean).join('\n').slice(0, answer.maxLength)
-    showVoiceNote('转写已填入回答框。请核对技术名词，再点击发送。')
-    answer.focus()
-  } catch {
-    retryAudio = audio
-    showVoiceNote('转写请求未完成，可重试或直接输入文字。', true)
-  } finally {
-    voiceState = 'idle'
-    render()
-  }
-}
 
-async function startRecording() {
-  stopSpeech()
-  voiceState = 'opening'
-  showVoiceNote('正在申请麦克风权限…')
-  render()
-  let stream
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({audio: true})
-    const recording = new MediaRecorder(stream)
-    const chunks = []
-    let failed = false
-    let timer
-    const startedAt = performance.now()
-    recording.ondataavailable = event => {
-      if (event.data.size) chunks.push(event.data)
+    function bubble(content, speaker) {
+      const element = document.createElement('div')
+      element.className = 'bubble ' + speaker
+      element.textContent = content
+      messages.appendChild(element)
+      messages.scrollTop = messages.scrollHeight
+      return element
     }
-    recording.onerror = () => { failed = true }
-    recording.onstop = () => {
-      clearInterval(timer)
-      stream.getTracks().forEach(track => track.stop())
-      recorder = null
-      const audio = new Blob(chunks, {type: recording.mimeType || chunks[0]?.type})
-      if (!failed && audio.size && performance.now() - startedAt >= 1000) {
-        void transcribeAudio(audio)
+
+    function render() {
+      const completed = Math.floor(history.length / 2)
+      const voiceBusy = voiceState !== 'idle'
+      const canAnswer = Boolean(context && !ended && history.length % 2)
+      const locked = busy || Boolean(context && !ended)
+      stepRole.dataset.state = confirmedRole ? 'done' : 'active'
+      stepResume.dataset.state = !confirmedRole ? 'locked' : resumeText ? 'done' : 'active'
+      role.disabled = locked
+      roleConfirm.disabled = locked
+      roleConfirm.textContent = confirmedRole ? '修改' : '确认'
+      resumeClear.hidden = locked
+      byId('role-value').textContent = confirmedRole
+      byId('resume-value').textContent = resumeName.textContent.replace(/^(?:已导入:\s*|✓\s*)/, '')
+      document.querySelector('.prepare').dataset.compact = Boolean(context)
+      byId('chat').hidden = !context
+      start.disabled = busy || voiceBusy || parsing || !confirmedRole || !resumeText
+      start.textContent = context ? '重新开始' : !confirmedRole ? '请先输入面试岗位' : !resumeText ? '请先导入简历' : '开始面试'
+      answer.disabled = busy || !canAnswer
+      send.disabled = answer.disabled || voiceBusy
+      send.textContent = context && completed === questionLimit - 1 ? '提交最后一题' : '发送'
+      finish.hidden = completed === 0 || !report.hidden
+      finish.disabled = busy || voiceBusy
+      finish.textContent = ended ? '重试生成复盘' : '提前结束'
+      if (!context) {
+        status.textContent = confirmedRole ? `准备就绪 · ${confirmedRole}` : '准备就绪 · 请先输入岗位'
+      } else if (ended) {
+        const label = busy ? '正在生成复盘…' : '面试已结束'
+        status.textContent = `${label} · 已回答 ${completed} / ${questionLimit} 题`
       } else {
+        const progress = `第 ${completed + 1} / ${questionLimit} 题`
+        const activity = busy ? '面试官思考中…' :
+          voiceState === 'recording' ? '正在倾听' :
+          voiceState === 'transcribing' ? '正在转写…' :
+          synthesizing ? '正在合成语音…' :
+          speaking ? '面试官正在提问' : '等待回答'
+        status.textContent = `${progress} · ${activity}`
+      }
+      portrait.dataset.state = busy || voiceState === 'transcribing' || synthesizing ? 'thinking' :
+        speaking ? 'speaking' : canAnswer ? 'listening' : 'idle'
+      readQuestion.disabled = !canAnswer || busy || voiceBusy
+      readQuestion.textContent = synthesizing ? '合成语音中…' : speaking ? '停止朗读' : '朗读本题'
+      recordAnswer.disabled = !canRecord || !canAnswer || busy ||
+        (voiceBusy && voiceState !== 'recording')
+      recordAnswer.dataset.recording = voiceState === 'recording'
+      if (voiceState !== 'recording') recordAnswer.textContent = '录音回答'
+      retryTranscription.hidden = !retryAudio || !canAnswer
+      retryTranscription.disabled = busy || voiceBusy
+      autoRead.disabled = false
+    }
+
+    function stopSpeech() {
+      if (ttsAbort) {
+        ttsAbort.abort()
+        ttsAbort = null
+      }
+      if (audioPlayer) {
+        audioPlayer.onended = null
+        audioPlayer.onerror = null
+        audioPlayer.pause()
+        audioPlayer.src = ''
+        audioPlayer = null
+      }
+      if (audioUrl) {
+        URL.revokeObjectURL(audioUrl)
+        audioUrl = null
+      }
+      synthesizing = false
+      speaking = false
+      render()
+    }
+
+    async function speakQuestion() {
+      const question = history.at(-1)
+      if (question?.role !== 'assistant' || ended) return
+      if (!ttsModels.length || !ttsActiveId) {
+        showVoiceNote('尚未配置语音模型，请先在「模型配置」中添加语音模型。', true)
+        return
+      }
+      stopSpeech()
+      const controller = new AbortController()
+      ttsAbort = controller
+      synthesizing = true
+      speaking = true
+      render()
+      try {
+        const response = await fetch('/tts', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({text: question.content}),
+          signal: controller.signal
+        })
+        if (!response.ok) {
+          const data = await response.json().catch(() => ({}))
+          throw new Error(data.error || '语音合成失败。')
+        }
+        const blob = await response.blob()
+        if (ttsAbort !== controller) return
+        synthesizing = false
+        audioUrl = URL.createObjectURL(blob)
+        const player = new Audio(audioUrl)
+        audioPlayer = player
+        player.onended = () => {
+          if (audioPlayer === player) stopSpeech()
+        }
+        player.onerror = () => {
+          if (audioPlayer !== player) return
+          stopSpeech()
+          showVoiceNote('语音播放失败，可点击重播或直接阅读题目。', true)
+        }
+        render()
+        await player.play()
+      } catch (err) {
+        if (err.name === 'AbortError') return
+        stopSpeech()
+        showVoiceNote(err.message || '语音合成暂不可用，请检查语音模型配置。', true)
+      }
+    }
+
+    async function blobToWav16k(blob) {
+      try {
+        const arrayBuf = await blob.arrayBuffer()
+        const ctx = new (window.AudioContext || window.webkitAudioContext)()
+        const decoded = await ctx.decodeAudioData(arrayBuf)
+        await ctx.close()
+        const targetSr = 16000
+        const length = Math.max(1, Math.round(decoded.duration * targetSr))
+        const offline = new OfflineAudioContext(1, length, targetSr)
+        const src = offline.createBufferSource()
+        src.buffer = decoded
+        src.connect(offline.destination)
+        src.start(0)
+        const rendered = await offline.startRendering()
+        const samples = rendered.getChannelData(0)
+        const wavBuf = new ArrayBuffer(44 + samples.length * 2)
+        const view = new DataView(wavBuf)
+        const writeStr = (off, s) => { for (let i = 0; i < s.length; i++) view.setUint8(off + i, s.charCodeAt(i)) }
+        writeStr(0, 'RIFF')
+        view.setUint32(4, 36 + samples.length * 2, true)
+        writeStr(8, 'WAVEfmt ')
+        view.setUint32(16, 16, true)
+        view.setUint16(20, 1, true)
+        view.setUint16(22, 1, true)
+        view.setUint32(24, targetSr, true)
+        view.setUint32(28, targetSr * 2, true)
+        view.setUint16(32, 2, true)
+        view.setUint16(34, 16, true)
+        writeStr(36, 'data')
+        view.setUint32(40, samples.length * 2, true)
+        for (let i = 0; i < samples.length; i++) {
+          const s = Math.max(-1, Math.min(1, samples[i]))
+          view.setInt16(44 + i * 2, s < 0 ? s * 0x8000 : s * 0x7FFF, true)
+        }
+        return new Blob([wavBuf], {type: 'audio/wav'})
+      } catch {
+        return blob
+      }
+    }
+
+    async function transcribeAudio(audio) {
+      voiceState = 'transcribing'
+      retryAudio = null
+      showVoiceNote(asrActiveId ? '正在调用 ASR 模型转写录音，请稍候…' : '正在本机转写录音，请稍候…')
+      render()
+      try {
+        const wavAudio = await blobToWav16k(audio)
+        const response = await fetch('/transcribe', {
+          method: 'POST',
+          headers: {'Content-Type': wavAudio.type || 'audio/wav'},
+          body: wavAudio,
+          signal: AbortSignal.timeout(120000)
+        })
+        const result = await response.json()
+        if (!response.ok) {
+          if (response.status >= 500) retryAudio = audio
+          showVoiceNote(result.error || '转写失败，请重录。', true)
+          return
+        }
+        answer.value = [answer.value.trimEnd(), result.text].filter(Boolean).join('\n').slice(0, answer.maxLength)
+        showVoiceNote('转写已填入回答框。请核对技术名词，再点击发送。')
+        answer.focus()
+      } catch {
+        retryAudio = audio
+        showVoiceNote('转写请求未完成，可重试或直接输入文字。', true)
+      } finally {
         voiceState = 'idle'
-        showVoiceNote('录音太短或采集失败，请重新录制。', true)
         render()
       }
     }
-    recording.start()
-    recorder = recording
-    retryAudio = null
-    voiceState = 'recording'
-    recordAnswer.textContent = '结束录音 · 0 秒'
-    showVoiceNote('正在录音。说完后点击「结束录音」，最长 90 秒。')
-    timer = setInterval(() => {
-      const elapsed = Math.floor((performance.now() - startedAt) / 1000)
-      recordAnswer.textContent = `结束录音 · ${elapsed} 秒`
-      if (elapsed >= RECORD_LIMIT_SECONDS && recording.state === 'recording') recording.stop()
-    }, 1000)
-  } catch (failure) {
-    stream?.getTracks().forEach(track => track.stop())
-    voiceState = 'idle'
-    showVoiceNote(failure.name === 'NotAllowedError' ?
-      '麦克风权限未开启。可在地址栏允许访问后重试，或直接输入文字。' :
-      '无法使用麦克风。请检查设备，或直接输入文字。', true)
-  }
-  render()
-}
 
-readQuestion.addEventListener('click', () => utterance ? stopSpeech() : speakQuestion())
-autoRead.addEventListener('change', () => { if (!autoRead.checked) stopSpeech() })
-recordAnswer.addEventListener('click', () => {
-  if (recorder?.state === 'recording') recorder.stop()
-  else if (voiceState === 'idle') void startRecording()
-})
-retryTranscription.addEventListener('click', () => {
-  if (retryAudio && voiceState === 'idle') void transcribeAudio(retryAudio)
-})
-
-async function request(path, transcript) {
-  busy = true
-  error.textContent = ''
-  chatError.hidden = true
-  chatError.textContent = ''
-  render()
-  try {
-    const response = await fetch(path, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({...context, history: transcript})
-    })
-    const data = await response.json()
-    if (!response.ok) throw new Error(data.error || '请求失败，请重试。')
-    return data
-  } catch (failure) {
-    const notice = transcript.length ? chatError : error
-    notice.hidden = false
-    notice.textContent = failure.message || '请求失败，请检查连接。'
-    return null
-  } finally {
-    busy = false
-    render()
-  }
-}
-
-async function generateReport() {
-  stopSpeech()
-  retryAudio = null
-  showVoiceNote('可在上方回看问答记录。')
-  ended = true
-  const result = await request('/report', history)
-  if (result) {
-    reportText.textContent = result.report
-    report.hidden = false
-    report.scrollIntoView({block: 'nearest'})
-    render()
-  }
-}
-
-start.addEventListener('click', async () => {
-  if (busy || voiceState !== 'idle') return
-  if (!confirmedRole || !resumeText) {
-    error.textContent = '请先输入面试岗位并导入简历。'
-    return
-  }
-  stopSpeech()
-  retryAudio = null
-  showVoiceNote(canRecord ? '可录音回答，也可直接输入文字。' : '当前浏览器无法录音，可直接输入文字回答。')
-  context = {role: confirmedRole, resume: resumeText}
-  history = []
-  ended = false
-  answer.value = ''
-  report.hidden = true
-  reportText.textContent = ''
-  messages.replaceChildren()
-  const result = await request('/interview', history)
-  if (result) {
-    questionLimit = result.question_limit
-    history.push({role: 'assistant', content: result.question})
-    bubble(result.question, 'assistant')
-  } else {
-    context = null
-    messages.appendChild(empty)
-  }
-  render()
-  if (result && matchMedia('(max-width: 760px)').matches) {
-    portrait.scrollIntoView({block: 'start'})
-  } else if (result) {
-    answer.closest('.chat').scrollIntoView({block: 'start'})
-    answer.focus({preventScroll: true})
-  }
-  if (result && autoRead.checked) speakQuestion()
-})
-
-byId('form').addEventListener('submit', async event => {
-  event.preventDefault()
-  const content = answer.value.trim()
-  if (!content || busy || ended || !context || voiceState !== 'idle') return
-  stopSpeech()
-  const nextHistory = [...history, {role: 'user', content}]
-  if (nextHistory.length === 2 * questionLimit) {
-    history = nextHistory
-    bubble(content, 'user')
-    answer.value = ''
-    await generateReport()
-    return
-  }
-  const result = await request('/interview', nextHistory)
-  if (result) {
-    history = [...nextHistory, {role: 'assistant', content: result.question}]
-    bubble(content, 'user')
-    bubble(result.question, 'assistant')
-    answer.value = ''
-    retryAudio = null
-    showVoiceNote(canRecord ? '可录音回答，也可直接输入文字。' : '当前浏览器无法录音，可直接输入文字回答。')
-    render()
-    if (autoRead.checked) speakQuestion()
-  }
-  answer.focus()
-})
-
-finish.addEventListener('click', () => {
-  if (!busy && voiceState === 'idle' && history.length >= 2) generateReport()
-})
-
-// ---------- 第 1 步：岗位 ----------
-function confirmRole() {
-  if (confirmedRole) {
-    confirmedRole = ''
-    roleSummary.hidden = true
-    role.focus()
-    render()
-    return
-  }
-  const value = role.value.trim()
-  if (!value) {
-    error.textContent = '请输入面试岗位。'
-    role.focus()
-    return
-  }
-  error.textContent = ''
-  confirmedRole = value
-  roleSummary.textContent = `面试岗位：${value}`
-  roleSummary.hidden = false
-  render()
-}
-roleConfirm.addEventListener('click', confirmRole)
-role.addEventListener('keydown', event => {
-  if (event.key === 'Enter') { event.preventDefault(); confirmRole() }
-})
-
-// ---------- 第 2 步：简历 ----------
-function setResume(text, name) {
-  const clean = text.replace(/\r/g, '').replace(/\n{3,}/g, '\n\n').trim()
-  if (clean.length < 30) {
-    error.textContent = '简历内容过少（至少 30 字），请检查文件或补充内容。'
-    return
-  }
-  error.textContent = ''
-  resumeText = clean.slice(0, 12000)
-  resumeName.textContent = `✓ ${name} · ${resumeText.length} 字`
-  resumeInfo.hidden = false
-  render()
-}
-
-async function importFile(file) {
-  if (!file || parsing) return
-  const ext = file.name.split('.').pop().toLowerCase()
-  if (!['pdf', 'docx', 'txt', 'md'].includes(ext)) {
-    error.textContent = '暂不支持该格式，请上传 PDF / DOCX / TXT / MD。'
-    return
-  }
-  if (file.size > MAX_RESUME_BYTES) {
-    error.textContent = '文件超过 5MB，请压缩后重试。'
-    return
-  }
-  parsing = true
-  dropText.textContent = `正在解析「${file.name}」…`
-  render()
-  try {
-    if (ext === 'txt' || ext === 'md') {
-      setResume(await file.text(), file.name)
-    } else {
-      const response = await fetch('/parse-resume?ext=' + ext, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/octet-stream'},
-        body: file
-      })
-      const data = await response.json()
-      if (!response.ok) throw new Error(data.error || '简历解析失败。')
-      setResume(data.text, file.name)
+    async function startRecording() {
+      stopSpeech()
+      voiceState = 'opening'
+      showVoiceNote('正在申请麦克风权限…')
+      render()
+      let stream
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({audio: true})
+        const recording = new MediaRecorder(stream)
+        const chunks = []
+        let failed = false
+        let timer
+        const startedAt = performance.now()
+        recording.ondataavailable = event => {
+          if (event.data.size) chunks.push(event.data)
+        }
+        recording.onerror = () => { failed = true }
+        recording.onstop = () => {
+          clearInterval(timer)
+          stream.getTracks().forEach(track => track.stop())
+          recorder = null
+          const audio = new Blob(chunks, {type: recording.mimeType || chunks[0]?.type})
+          if (!failed && audio.size && performance.now() - startedAt >= 1000) {
+            void transcribeAudio(audio)
+          } else {
+            voiceState = 'idle'
+            showVoiceNote('录音太短或采集失败，请重新录制。', true)
+            render()
+          }
+        }
+        recording.start()
+        recorder = recording
+        retryAudio = null
+        voiceState = 'recording'
+        recordAnswer.textContent = '结束录音 · 0 秒'
+        showVoiceNote('正在录音。说完后点击「结束录音」，最长 90 秒。')
+        timer = setInterval(() => {
+          const elapsed = Math.floor((performance.now() - startedAt) / 1000)
+          recordAnswer.textContent = `结束录音 · ${elapsed} 秒`
+          if (elapsed >= RECORD_LIMIT_SECONDS && recording.state === 'recording') recording.stop()
+        }, 1000)
+      } catch (failure) {
+        stream?.getTracks().forEach(track => track.stop())
+        voiceState = 'idle'
+        showVoiceNote(failure.name === 'NotAllowedError' ?
+          '麦克风权限未开启。可在地址栏允许访问后重试，或直接输入文字。' :
+          '无法使用麦克风。请检查设备，或直接输入文字。', true)
+      }
+      render()
     }
-  } catch (failure) {
-    error.textContent = failure.message || '简历解析失败，可改用粘贴文本。'
-  } finally {
-    parsing = false
-    dropText.innerHTML = DROP_DEFAULT
-    resumeFile.value = ''
-    render()
-  }
-}
 
-resumeFile.addEventListener('change', () => importFile(resumeFile.files[0]))
-drop.addEventListener('dragover', event => { event.preventDefault(); drop.dataset.over = 'true' })
-drop.addEventListener('dragleave', () => { drop.dataset.over = 'false' })
-drop.addEventListener('drop', event => {
-  event.preventDefault()
-  drop.dataset.over = 'false'
-  importFile(event.dataTransfer.files[0])
-})
-pasteConfirm.addEventListener('click', () => setResume(resumePaste.value, '粘贴的简历'))
-resumeClear.addEventListener('click', () => {
-  resumeText = ''
-  resumeInfo.hidden = true
-  render()
-})
-render()
-</script><script src="/avatar.js" type="module"></script></body></html>
+    readQuestion.addEventListener('click', () => (speaking || synthesizing) ? stopSpeech() : speakQuestion())
+    autoRead.addEventListener('change', () => { if (!autoRead.checked) stopSpeech() })
+    recordAnswer.addEventListener('click', () => {
+      if (recorder?.state === 'recording') recorder.stop()
+      else if (voiceState === 'idle') void startRecording()
+    })
+    retryTranscription.addEventListener('click', () => {
+      if (retryAudio && voiceState === 'idle') void transcribeAudio(retryAudio)
+    })
+
+    async function request(path, transcript, onChunk) {
+      busy = true
+      error.textContent = ''
+      chatError.hidden = true
+      chatError.textContent = ''
+      render()
+      try {
+        const response = await fetch(path, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({...context, history: transcript})
+        })
+        if (!response.ok) { const data = await response.json(); throw new Error(data.error || '请求失败，请重试。') }
+        const reader = response.body.getReader(), decoder = new TextDecoder()
+        let buf = '', text = '', limit = questionLimit
+        while (true) {
+          const {done, value} = await reader.read()
+          if (done) break
+          buf += decoder.decode(value, {stream: true})
+          const lines = buf.split('\n')
+          buf = lines.pop()
+          for (const line of lines) {
+            if (!line.trim()) continue
+            const msg = JSON.parse(line)
+            if (msg.delta) { text += msg.delta; onChunk?.(text) }
+            if (msg.question_limit) limit = msg.question_limit
+          }
+        }
+        if (!text.trim()) throw new Error('模型没有返回有效内容，请重试。')
+        return {[path === '/report' ? 'report' : 'question']: text.trim(), question_limit: limit}
+      } catch (failure) {
+        const notice = transcript.length ? chatError : error
+        notice.hidden = false
+        notice.textContent = failure.message || '请求失败，请检查连接。'
+        return null
+      } finally {
+        busy = false
+        render()
+      }
+    }
+
+    async function generateReport() {
+      stopSpeech()
+      retryAudio = null
+      showVoiceNote('可在上方回看问答记录。')
+      ended = true
+      report.hidden = false
+      reportText.textContent = '正在生成面试复盘…'
+      const result = await request('/report', history, text => {
+        reportText.textContent = text
+        report.scrollIntoView({block: 'nearest'})
+      })
+      if (!result) report.hidden = true
+      if (result) {
+        reportText.textContent = result.report
+        report.hidden = false
+        report.scrollIntoView({block: 'nearest'})
+        render()
+      }
+    }
+
+    start.addEventListener('click', async () => {
+      if (busy || voiceState !== 'idle') return
+      if (!confirmedRole || !resumeText) {
+        error.textContent = '请先输入面试岗位并导入简历。'
+        return
+      }
+      stopSpeech()
+      retryAudio = null
+      showVoiceNote(canRecord ? '可录音回答，也可直接输入文字。' : '当前浏览器无法录音，可直接输入文字回答。')
+      context = {role: confirmedRole, resume: resumeText}
+      history = []
+      ended = false
+      answer.value = ''
+      report.hidden = true
+      reportText.textContent = ''
+      messages.replaceChildren()
+      const aiBubble = bubble('面试官正在思考…', 'assistant')
+      const result = await request('/interview', history, text => {
+        aiBubble.textContent = text
+        messages.scrollTop = messages.scrollHeight
+      })
+      if (!result) aiBubble.remove()
+      if (result) {
+        questionLimit = result.question_limit
+        history.push({role: 'assistant', content: result.question})
+        aiBubble.textContent = result.question
+        retryAudio = null
+      } else {
+        context = null
+        messages.appendChild(empty)
+      }
+      render()
+      if (result && matchMedia('(max-width: 760px)').matches) {
+        portrait.scrollIntoView({block: 'start'})
+      } else if (result) {
+        answer.closest('.chat').scrollIntoView({block: 'start'})
+        answer.focus({preventScroll: true})
+      }
+      if (result && autoRead.checked) speakQuestion()
+    })
+
+    answer.addEventListener('keydown', event => {
+      if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
+        event.preventDefault()
+        byId('form').requestSubmit()
+      }
+    })
+
+    byId('form').addEventListener('submit', async event => {
+      event.preventDefault()
+      const content = answer.value.trim()
+      if (!content || busy || ended || !context || voiceState !== 'idle') return
+      stopSpeech()
+      const nextHistory = [...history, {role: 'user', content}]
+      if (nextHistory.length === 2 * questionLimit) {
+        history = nextHistory
+        bubble(content, 'user')
+        retryAudio = null
+        answer.value = ''
+        await generateReport()
+        return
+      }
+      const userBubble = bubble(content, 'user')
+      answer.value = ''
+      const aiBubble = bubble('面试官正在思考…', 'assistant')
+      const result = await request('/interview', nextHistory, text => {
+        aiBubble.textContent = text
+        messages.scrollTop = messages.scrollHeight
+      })
+      if (!result) aiBubble.remove()
+      if (result) {
+        history = [...nextHistory, {role: 'assistant', content: result.question}]
+        aiBubble.textContent = result.question
+        retryAudio = null
+        answer.value = ''
+        showVoiceNote(canRecord ? '可录音回答，也可直接输入文字。' : '当前浏览器无法录音，可直接输入文字回答。')
+        render()
+        if (autoRead.checked) speakQuestion()
+      } else {
+        userBubble.remove()
+        answer.value = content
+      }
+      answer.focus()
+    })
+
+    finish.addEventListener('click', () => {
+      if (!busy && voiceState === 'idle' && history.length >= 2) generateReport()
+    })
+
+    // ---------- 第 1 步：岗位 ----------
+    function confirmRole() {
+      if (confirmedRole) {
+        confirmedRole = ''
+        roleSummary.hidden = true
+        role.focus()
+        render()
+        return
+      }
+      const value = role.value.trim()
+      if (!value) {
+        error.textContent = '请输入面试岗位。'
+        role.focus()
+        return
+      }
+      error.textContent = ''
+      confirmedRole = value
+      roleSummary.textContent = `面试岗位：${value}`
+      roleSummary.hidden = false
+      render()
+    }
+    roleConfirm.addEventListener('click', confirmRole)
+    role.addEventListener('keydown', event => {
+      if (event.key === 'Enter') { event.preventDefault(); confirmRole() }
+    })
+
+    // ---------- 第 2 步：简历 ----------
+    function setResume(text, name) {
+      const clean = text.replace(/\r/g, '').replace(/\n{3,}/g, '\n\n').trim()
+      if (clean.length < 30) {
+        error.textContent = '简历内容过少（至少 30 字），请检查文件或补充内容。'
+        return
+      }
+      error.textContent = ''
+      resumeText = clean.slice(0, 12000)
+      resumeName.textContent = `已导入: ${name} · ${resumeText.length} 字`
+      resumeInfo.hidden = false
+      render()
+    }
+
+    async function importFile(file) {
+      if (!file || parsing) return
+      const ext = file.name.split('.').pop().toLowerCase()
+      if (!['pdf', 'docx', 'txt', 'md'].includes(ext)) {
+        error.textContent = '暂不支持该格式，请上传 PDF / DOCX / TXT / MD。'
+        return
+      }
+      if (file.size > MAX_RESUME_BYTES) {
+        error.textContent = '文件超过 5MB，请压缩后重试。'
+        return
+      }
+      parsing = true
+      dropText.textContent = `正在解析「${file.name}」…`
+      render()
+      try {
+        if (ext === 'txt' || ext === 'md') {
+          setResume(await file.text(), file.name)
+        } else {
+          const response = await fetch('/parse-resume?ext=' + ext, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/octet-stream'},
+            body: file
+          })
+          const data = await response.json()
+          if (!response.ok) throw new Error(data.error || '简历解析失败。')
+          setResume(data.text, file.name)
+        }
+      } catch (failure) {
+        error.textContent = failure.message || '简历解析失败，可改用粘贴文本。'
+      } finally {
+        parsing = false
+        dropText.innerHTML = DROP_DEFAULT
+        resumeFile.value = ''
+        render()
+      }
+    }
+
+    resumeFile.addEventListener('change', () => importFile(resumeFile.files[0]))
+    drop.addEventListener('dragover', event => { event.preventDefault(); drop.dataset.over = 'true' })
+    drop.addEventListener('dragleave', () => { drop.dataset.over = 'false' })
+    drop.addEventListener('drop', event => {
+      event.preventDefault()
+      drop.dataset.over = 'false'
+      importFile(event.dataTransfer.files[0])
+    })
+    pasteConfirm.addEventListener('click', () => setResume(resumePaste.value, '粘贴的简历'))
+    resumeClear.addEventListener('click', () => {
+      resumeText = ''
+      resumeInfo.hidden = true
+      render()
+    })
+    render()
+
+    // ---------- 大模型与语音模型配置 ----------
+    const PRESETS = {
+      deepseek: ['https://api.deepseek.com', 'deepseek-chat'],
+      openai: ['https://api.openai.com/v1', 'gpt-4o-mini'],
+      qwen: ['https://dashscope.aliyuncs.com/compatible-mode/v1', 'qwen-plus'],
+      moonshot: ['https://api.moonshot.cn/v1', 'moonshot-v1-8k'],
+      zhipu: ['https://open.bigmodel.cn/api/paas/v4', 'glm-4-flash']
+    }
+    const VOICE_PRESETS = {
+      tts: {
+        qwen: ['https://dashscope.aliyuncs.com/compatible-mode/v1', 'qwen3-tts-flash', 'Ethan'],
+        openai: ['https://api.openai.com/v1', 'gpt-4o-mini-tts', 'alloy'],
+        siliconflow: ['https://api.siliconflow.cn/v1', 'FunAudioLLM/CosyVoice2-0.5B', 'alex']
+      },
+      asr: {
+        qwen: ['https://dashscope.aliyuncs.com/compatible-mode/v1', 'qwen3-asr-flash', ''],
+        openai: ['https://api.openai.com/v1', 'whisper-1', ''],
+        siliconflow: ['https://api.siliconflow.cn/v1', 'FunAudioLLM/SenseVoiceSmall', '']
+      }
+    }
+    const dlg = byId('settings')
+    const ttsDlg = byId('tts-settings')
+    const listDlg = byId('model-list')
+    const cfgMsg = byId('cfg-msg')
+    const ttsCfgMsg = byId('tts-cfg-msg')
+    const cfg = {
+      provider: byId('cfg-provider'),
+      url: byId('cfg-url'),
+      model: byId('cfg-model'),
+      key: byId('cfg-key'),
+      temp: byId('cfg-temp')
+    }
+    const ttsCfg = {
+      kind: byId('tts-kind'),
+      provider: byId('tts-provider'),
+      url: byId('tts-url'),
+      model: byId('tts-model'),
+      voiceGroup: byId('tts-voice-group'),
+      voicePreset: byId('tts-voice-preset'),
+      voice: byId('tts-voice'),
+      key: byId('tts-key'),
+      testBtn: byId('tts-cfg-test')
+    }
+
+    function cfgNote(text, isError = false) {
+      cfgMsg.textContent = text
+      cfgMsg.dataset.error = isError
+    }
+
+    function ttsCfgNote(text, isError = false) {
+      ttsCfgMsg.textContent = text
+      ttsCfgMsg.dataset.error = isError
+    }
+
+    function cfgBody(extra = {}) {
+      return JSON.stringify({
+        id: editingId,
+        provider: cfg.provider.value,
+        base_url: cfg.url.value,
+        model: cfg.model.value,
+        api_key: cfg.key.value,
+        temperature: cfg.temp.value,
+        ...extra
+      })
+    }
+
+    function ttsCfgBody(extra = {}) {
+      return JSON.stringify({
+        id: editingTtsId,
+        kind: ttsCfg.kind.value,
+        provider: ttsCfg.provider.value,
+        base_url: ttsCfg.url.value,
+        model: ttsCfg.model.value,
+        voice: ttsCfg.kind.value === 'tts' ? ttsCfg.voice.value : '',
+        api_key: ttsCfg.key.value,
+        ...extra
+      })
+    }
+
+    async function cfgPost(path, busyText, body = cfgBody()) {
+      cfgNote(busyText)
+      try {
+        const response = await fetch(path, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body,
+          signal: AbortSignal.timeout(90000)
+        })
+        const data = await response.json()
+        if (!response.ok) {
+          cfgNote(data.error || '操作失败。', true)
+          return false
+        }
+        return data
+      } catch {
+        cfgNote('请求未完成，请检查本地服务。', true)
+        return false
+      }
+    }
+
+    async function ttsCfgPost(busyText, extra = {}) {
+      ttsCfgNote(busyText)
+      try {
+        const response = await fetch('/tts-config', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: ttsCfgBody(extra),
+          signal: AbortSignal.timeout(90000)
+        })
+        const data = await response.json()
+        if (!response.ok) {
+          ttsCfgNote(data.error || '操作失败。', true)
+          return false
+        }
+        return data
+      } catch {
+        ttsCfgNote('请求未完成，请检查本地服务。', true)
+        return false
+      }
+    }
+
+    const esc = t => String(t).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]))
+
+    async function loadModels() {
+      try {
+        const data = await (await fetch('/config')).json()
+        models = data.models || []
+        activeId = data.active || ''
+        ttsModels = data.tts_models || []
+        ttsActiveId = data.tts_active || ''
+        asrActiveId = data.asr_active || ''
+      } catch {
+        models = []
+        ttsModels = []
+      }
+      refreshPicker()
+      const box = byId('model-items')
+      box.innerHTML = models.length ? models.map(m => `
+        <div class="model-item${m.id === activeId ? ' on' : ''}">
+          <div class="info">
+            <b>${esc(m.model)}${m.id === activeId ? '（当前使用）' : ''}</b>
+            <span>${esc(m.base_url)} · ${esc(m.key_hint)}</span>
+          </div>
+          ${m.id === activeId ? '' : `<button type="button" class="btn btn-ghost" data-act="select" data-id="${m.id}">使用</button>`}
+          <button type="button" class="btn btn-ghost" data-act="edit" data-id="${m.id}">编辑</button>
+          <button type="button" class="btn btn-ghost" data-act="delete" data-id="${m.id}">删除</button>
+        </div>`).join('') : '<p class="model-empty">还没有配置对话模型，请点击“新增对话模型”。</p>'
+
+      const ttsBox = byId('tts-model-items')
+      if (ttsBox) {
+        ttsBox.innerHTML = ttsModels.length ? ttsModels.map(m => {
+          const isAsr = m.kind === 'asr'
+          const isOn = isAsr ? m.id === asrActiveId : m.id === ttsActiveId
+          const tag = isAsr ? '[ASR]' : '[TTS]'
+          const voicePart = (!isAsr && m.voice) ? ` · ${esc(m.voice)}` : ''
+          const activeLabel = isOn ? (isAsr ? '（当前 ASR）' : '（当前 TTS）') : ''
+          return `
+          <div class="model-item${isOn ? ' on' : ''}">
+            <div class="info">
+              <b>${tag} ${esc(m.model)}${voicePart}${activeLabel}</b>
+              <span>${esc(m.base_url)} · ${esc(m.key_hint)}</span>
+            </div>
+            ${isOn ? '' : `<button type="button" class="btn btn-ghost" data-tts-act="select" data-id="${m.id}">使用</button>`}
+            <button type="button" class="btn btn-ghost" data-tts-act="edit" data-id="${m.id}">编辑</button>
+            <button type="button" class="btn btn-ghost" data-tts-act="delete" data-id="${m.id}">删除</button>
+          </div>`
+        }).join('') : '<p class="model-empty">还没有配置语音模型，请点击“新增语音模型”（可选择 TTS 或 ASR）。</p>'
+      }
+      render()
+    }
+
+    const picker = byId('interviewer-model')
+    const voicePicker = byId('voice-model')
+    const asrPicker = byId('asr-model')
+    function refreshPicker() {
+      picker.innerHTML = models.length ? models.map(m => `<option value="${esc(m.id)}"${m.id === activeId ? ' selected' : ''}>${esc(m.model)}</option>`).join('') : '<option value="">未配置对话模型</option>'
+      const onlyTts = ttsModels.filter(m => (m.kind || 'tts') === 'tts')
+      const onlyAsr = ttsModels.filter(m => m.kind === 'asr')
+      if (voicePicker) {
+        voicePicker.innerHTML = onlyTts.length ? onlyTts.map(m => `<option value="${esc(m.id)}"${m.id === ttsActiveId ? ' selected' : ''}>${esc(m.model)} · ${esc(m.voice)}</option>`).join('') : '<option value="">未配置 TTS 模型</option>'
+      }
+      if (asrPicker) {
+        asrPicker.innerHTML = onlyAsr.length ? onlyAsr.map(m => `<option value="${esc(m.id)}"${m.id === asrActiveId ? ' selected' : ''}>${esc(m.model)}</option>`).join('') : '<option value="">未配置 ASR 模型（默认本机识别）</option>'
+      }
+      const activeModel = models.find(m => m.id === activeId)
+      const activeTts = onlyTts.find(m => m.id === ttsActiveId)
+      const activeAsr = onlyAsr.find(m => m.id === asrActiveId)
+      const modelTag = byId('current-model-tag')
+      if (modelTag) {
+        const llmPart = activeModel ? activeModel.model : '未配置'
+        const ttsPart = activeTts ? `${activeTts.model} (${activeTts.voice})` : '未配置'
+        const asrPart = activeAsr ? activeAsr.model : '本机识别'
+        modelTag.textContent = `LLM: ${llmPart} · TTS: ${ttsPart} · ASR: ${asrPart}`
+      }
+    }
+
+    byId('open-interviewer').addEventListener('click', async () => {
+      byId('iv-msg').textContent = ''
+      await loadModels()
+      byId('interviewer-dlg').showModal()
+    })
+    byId('iv-close').addEventListener('click', () => byId('interviewer-dlg').close())
+    byId('iv-manage').addEventListener('click', async () => {
+      byId('interviewer-dlg').close()
+      await loadModels()
+      listDlg.showModal()
+    })
+    byId('iv-save').addEventListener('click', async () => {
+      if (!picker.value) {
+        byId('iv-msg').textContent = '请先在“模型配置”中新增对话模型。'
+        return
+      }
+      await fetch('/config', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({action: 'select', id: picker.value})
+      })
+      if (voicePicker && voicePicker.value) {
+        await fetch('/tts-config', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({action: 'select', id: voicePicker.value})
+        })
+      }
+      if (asrPicker && asrPicker.value) {
+        await fetch('/tts-config', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({action: 'select', id: asrPicker.value})
+        })
+      }
+      await loadModels()
+      byId('interviewer-dlg').close()
+    })
+    loadModels()
+
+    function openForm(m) {
+      editingId = m ? m.id : ''
+      cfgNote('')
+      cfg.key.value = ''
+      byId('cfg-title').textContent = m ? '编辑对话模型' : '新增对话模型'
+      const preset = PRESETS.deepseek
+      cfg.provider.value = m && [...cfg.provider.options].some(o => o.value === m.provider) ? m.provider : (m ? 'custom' : 'deepseek')
+      cfg.url.value = m ? m.base_url : preset[0]
+      cfg.model.value = m ? m.model : preset[1]
+      cfg.temp.value = m ? m.temperature : 0.7
+      cfg.key.placeholder = m && m.has_key ? `已保存密钥 ${m.key_hint}，留空则不修改` : '请输入 API Key'
+      listDlg.close()
+      dlg.showModal()
+    }
+
+    function syncVoiceKindUI() {
+      const isAsr = ttsCfg.kind.value === 'asr'
+      ttsCfg.voiceGroup.hidden = isAsr
+      ttsCfg.testBtn.textContent = isAsr ? '测试连接' : '试听测试'
+      ttsCfg.model.placeholder = isAsr ? '例如：qwen3-asr-flash 或 whisper-1' : '例如：qwen3-tts-flash 或 qwen3-omni-flash'
+    }
+
+    function applyVoicePreset() {
+      const kindMap = VOICE_PRESETS[ttsCfg.kind.value] || VOICE_PRESETS.tts
+      const preset = kindMap[ttsCfg.provider.value]
+      if (preset) {
+        ttsCfg.url.value = preset[0]
+        ttsCfg.model.value = preset[1]
+        if (ttsCfg.kind.value === 'tts') {
+          ttsCfg.voice.value = preset[2]
+          ttsCfg.voicePreset.value = [...ttsCfg.voicePreset.options].some(o => o.value === preset[2]) ? preset[2] : 'custom'
+        }
+      }
+    }
+
+    function openTtsForm(m) {
+      editingTtsId = m ? m.id : ''
+      ttsCfgNote('')
+      ttsCfg.key.value = ''
+      byId('tts-cfg-title').textContent = m ? '编辑语音模型' : '新增语音模型'
+      const kind = m && m.kind === 'asr' ? 'asr' : 'tts'
+      ttsCfg.kind.value = kind
+      const preset = (VOICE_PRESETS[kind] || VOICE_PRESETS.tts).qwen
+      ttsCfg.provider.value = m && [...ttsCfg.provider.options].some(o => o.value === m.provider) ? m.provider : (m ? 'custom' : 'qwen')
+      ttsCfg.url.value = m ? m.base_url : preset[0]
+      ttsCfg.model.value = m ? m.model : preset[1]
+      const voiceVal = (m && m.voice) ? m.voice : (preset[2] || 'Ethan')
+      ttsCfg.voice.value = voiceVal
+      ttsCfg.voicePreset.value = [...ttsCfg.voicePreset.options].some(o => o.value === voiceVal) ? voiceVal : 'custom'
+      ttsCfg.key.placeholder = m && m.has_key ? `已保存密钥 ${m.key_hint}，留空则不修改` : '请输入 API Key'
+      syncVoiceKindUI()
+      listDlg.close()
+      ttsDlg.showModal()
+    }
+
+    cfg.provider.addEventListener('change', () => {
+      const preset = PRESETS[cfg.provider.value]
+      if (preset) {
+        cfg.url.value = preset[0]
+        cfg.model.value = preset[1]
+      }
+    })
+
+    ttsCfg.kind.addEventListener('change', () => {
+      syncVoiceKindUI()
+      applyVoicePreset()
+    })
+
+    ttsCfg.provider.addEventListener('change', () => {
+      applyVoicePreset()
+    })
+
+    ttsCfg.voicePreset.addEventListener('change', () => {
+      if (ttsCfg.voicePreset.value !== 'custom') {
+        ttsCfg.voice.value = ttsCfg.voicePreset.value
+      } else {
+        ttsCfg.voice.focus()
+      }
+    })
+
+    byId('open-settings').addEventListener('click', async () => {
+      await loadModels()
+      listDlg.showModal()
+    })
+    byId('list-close').addEventListener('click', () => listDlg.close())
+    byId('add-model').addEventListener('click', () => openForm(null))
+    byId('add-tts-model').addEventListener('click', () => openTtsForm(null))
+    byId('model-items').addEventListener('click', async e => {
+      const btn = e.target.closest('button[data-act]')
+      if (!btn) return
+      const id = btn.dataset.id, act = btn.dataset.act
+      if (act === 'edit') return openForm(models.find(m => m.id === id))
+      if (act === 'delete' && !confirm('确定删除该对话模型配置？')) return
+      await fetch('/config', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({action: act, id})
+      })
+      loadModels()
+    })
+    byId('tts-model-items').addEventListener('click', async e => {
+      const btn = e.target.closest('button[data-tts-act]')
+      if (!btn) return
+      const id = btn.dataset.id, act = btn.dataset.ttsAct
+      if (act === 'edit') return openTtsForm(ttsModels.find(m => m.id === id))
+      if (act === 'delete' && !confirm('确定删除该语音模型配置？')) return
+      await fetch('/tts-config', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({action: act, id})
+      })
+      loadModels()
+    })
+    byId('cfg-close').addEventListener('click', async () => {
+      dlg.close()
+      await loadModels()
+      listDlg.showModal()
+    })
+    byId('cfg-test').addEventListener('click', async () => {
+      const data = await cfgPost('/config/test', '正在测试连接…')
+      if (data) cfgNote('连接成功，模型回复：' + data.reply)
+    })
+    byId('cfg-save').addEventListener('click', async () => {
+      if (await cfgPost('/config', '正在保存…')) {
+        cfgNote('已保存。')
+        setTimeout(async () => {
+          dlg.close()
+          await loadModels()
+          listDlg.showModal()
+        }, 500)
+      }
+    })
+    byId('tts-cfg-close').addEventListener('click', async () => {
+      ttsDlg.close()
+      await loadModels()
+      listDlg.showModal()
+    })
+    byId('tts-cfg-test').addEventListener('click', async () => {
+      const isAsr = ttsCfg.kind.value === 'asr'
+      const data = await ttsCfgPost(isAsr ? '正在测试 ASR 识别服务…' : '正在合成试听语音…', {action: 'test'})
+      if (!data) return
+      if (isAsr) {
+        ttsCfgNote('ASR 连接测试成功：' + (data.reply || '服务响应正常'))
+      } else if (data.audio_b64) {
+        ttsCfgNote('合成成功，正在播放试听语音…')
+        const testAudio = new Audio(`data:${data.type || 'audio/wav'};base64,${data.audio_b64}`)
+        testAudio.play().catch(() => ttsCfgNote('语音已合成，但浏览器阻止了自动播放。', true))
+      }
+    })
+    byId('tts-cfg-save').addEventListener('click', async () => {
+      if (await ttsCfgPost('正在保存…')) {
+        ttsCfgNote('已保存。')
+        setTimeout(async () => {
+          ttsDlg.close()
+          await loadModels()
+          listDlg.showModal()
+        }, 500)
+      }
+    })
+  </script>
+  <script src="/avatar.js" type="module"></script>
+</body>
+</html>
