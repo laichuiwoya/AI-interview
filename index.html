@@ -566,6 +566,22 @@ main {
   display: none;
 }
 
+.question-count {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin: var(--space-xs) 0 0;
+  white-space: nowrap;
+}
+
+.question-count select {
+  width: auto;
+}
+
+.prepare[data-compact="true"] .question-count {
+  margin: 0;
+}
+
 .start {
   width: 100%;
   margin-top: var(--space-md);
@@ -729,6 +745,33 @@ main {
   width: auto;
   margin: 0;
   accent-color: var(--color-accent);
+}
+
+.voice-tools .phone-button {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.voice-tools .call-mode {
+  color: #167044;
+}
+
+.voice-tools .record-answer {
+  color: var(--color-accent);
+}
+
+.voice-tools .call-mode[aria-pressed="true"] {
+  color: white;
+  background: #b42318;
+  border-color: #b42318;
+}
+
+.voice-tools .call-mode[aria-pressed="true"] svg {
+  transform: rotate(135deg);
 }
 
 .voice-tools button[data-recording="true"] {
@@ -1069,6 +1112,9 @@ dialog.settings label {
           </div>
         </div>
 
+        <label class="question-count" for="question-count">面试题数
+          <select id="question-count"></select>
+        </label>
         <button class="start btn btn-primary" id="start" disabled>开始面试</button>
         <p id="error" class="error" role="alert"></p>
       </section>
@@ -1082,11 +1128,20 @@ dialog.settings label {
           <button id="send" class="btn btn-primary" disabled>发送</button>
         </form>
         <div class="voice-tools" aria-label="语音工具">
+          <button id="call-mode" class="btn btn-ghost phone-button call-mode" type="button" aria-label="通话模式" aria-pressed="false" title="开启通话模式" disabled>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M22 16.9v3a2 2 0 0 1-2.2 2 18 18 0 0 1-7.8-2.8 18 18 0 0 1-5.5-5.5A18 18 0 0 1 3.7 5.8 2 2 0 0 1 5.7 3h3a2 2 0 0 1 2 1.7l.6 3a2 2 0 0 1-.5 2.1l-1.3 1.3a14 14 0 0 0 5.4 5.4l1.3-1.3a2 2 0 0 1 2.1-.5l3 .6a2 2 0 0 1 .7 1.6Z"/>
+            </svg>
+          </button>
           <button id="read-question" class="btn btn-ghost" type="button" disabled>朗读本题</button>
-          <button id="record-answer" class="btn btn-ghost" type="button" disabled>录音回答</button>
+          <button id="record-answer" class="btn btn-ghost phone-button record-answer" type="button" aria-label="录音回答" aria-pressed="false" title="开始录音" disabled>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 10v4m4-7v10m4-14v18m4-14v10m4-7v4"/>
+            </svg>
+          </button>
           <button id="retry-transcription" class="btn btn-ghost" type="button" hidden>重试转写</button>
           <label><input id="auto-read" type="checkbox" checked> 自动朗读</label>
-          <button id="finish" class="btn btn-ghost finish" type="button" hidden>提前结束</button>
+          <button id="finish" class="btn btn-ghost finish" type="button" hidden>重试生成复盘</button>
         </div>
         <p id="voice-note" class="voice-note" role="status">也可以直接输入文字回答。</p>
         <p id="chat-error" class="error" role="alert" hidden></p>
@@ -1247,6 +1302,12 @@ dialog.settings label {
     const MAX_RESUME_BYTES = 5 * 1024 * 1024
     const DROP_DEFAULT = dropText.innerHTML
     const start = byId('start')
+    const questionCount = byId('question-count')
+    const DEFAULT_QUESTION_COUNT = 5
+    for (let count = 1; count <= 20; count++) {
+      questionCount.add(new Option(`${count} 题`, String(count), count === DEFAULT_QUESTION_COUNT))
+    }
+    questionCount.value = String(DEFAULT_QUESTION_COUNT)
     const answer = byId('answer')
     const send = byId('send')
     const finish = byId('finish')
@@ -1262,12 +1323,17 @@ dialog.settings label {
     const recordAnswer = byId('record-answer')
     const retryTranscription = byId('retry-transcription')
     const autoRead = byId('auto-read')
+    const callMode = byId('call-mode')
     const voiceNote = byId('voice-note')
     const canRecord = Boolean(navigator.mediaDevices?.getUserMedia && window.MediaRecorder)
     const RECORD_LIMIT_SECONDS = 90
+    const SPEECH_LEVEL = 0.015
+    const END_OF_SPEECH_MS = 1600
+    const WAIT_FOR_SPEECH_MS = 15000
     let history = []
+    let questionGuidance = ''
     let context = null
-    let questionLimit = 5
+    let questionLimit = DEFAULT_QUESTION_COUNT
     let busy = false
     let ended = false
     let audioPlayer = null
@@ -1275,7 +1341,9 @@ dialog.settings label {
     let ttsAbort = null
     let synthesizing = false
     let speaking = false
+    let presentingQuestion = false
     let voiceState = 'idle'
+    let callModeEnabled = false
     let recorder = null
     let retryAudio = null
     let editingId = '', models = [], activeId = ''
@@ -1311,18 +1379,19 @@ dialog.settings label {
       document.querySelector('.prepare').dataset.compact = Boolean(context)
       byId('chat').hidden = !context
       start.disabled = busy || voiceBusy || parsing || !confirmedRole || !resumeText
+      questionCount.disabled = busy || voiceBusy
+      questionCount.title = context ? '重新开始时应用所选题数' : '选择本场面试题数'
       start.textContent = context ? '重新开始' : !confirmedRole ? '请先输入面试岗位' : !resumeText ? '请先导入简历' : '开始面试'
       answer.disabled = busy || !canAnswer
       send.disabled = answer.disabled || voiceBusy
       send.textContent = context && completed === questionLimit - 1 ? '提交最后一题' : '发送'
-      finish.hidden = completed === 0 || !report.hidden
+      finish.hidden = !ended || !report.hidden
       finish.disabled = busy || voiceBusy
-      finish.textContent = ended ? '重试生成复盘' : '提前结束'
       if (!context) {
         status.textContent = confirmedRole ? `准备就绪 · ${confirmedRole}` : '准备就绪 · 请先输入岗位'
       } else if (ended) {
         const label = busy ? '正在生成复盘…' : '面试已结束'
-        status.textContent = `${label} · 已回答 ${completed} / ${questionLimit} 题`
+        status.textContent = `${label} · 已完成 ${completed} / ${questionLimit} 题`
       } else {
         const progress = `第 ${completed + 1} / ${questionLimit} 题`
         const activity = busy ? '面试官思考中…' :
@@ -1332,17 +1401,22 @@ dialog.settings label {
           speaking ? '面试官正在提问' : '等待回答'
         status.textContent = `${progress} · ${activity}`
       }
-      portrait.dataset.state = busy || voiceState === 'transcribing' || synthesizing ? 'thinking' :
-        speaking ? 'speaking' : canAnswer ? 'listening' : 'idle'
+      portrait.dataset.state = speaking || presentingQuestion ? 'speaking' :
+        busy || voiceState === 'transcribing' || synthesizing ? 'thinking' :
+        canAnswer ? 'listening' : 'idle'
       readQuestion.disabled = !canAnswer || busy || voiceBusy
       readQuestion.textContent = synthesizing ? '合成语音中…' : speaking ? '停止朗读' : '朗读本题'
       recordAnswer.disabled = !canRecord || !canAnswer || busy ||
         (voiceBusy && voiceState !== 'recording')
       recordAnswer.dataset.recording = voiceState === 'recording'
-      if (voiceState !== 'recording') recordAnswer.textContent = '录音回答'
+      recordAnswer.setAttribute('aria-pressed', recordAnswer.dataset.recording)
+      if (voiceState !== 'recording') recordAnswer.title = '开始录音'
       retryTranscription.hidden = !retryAudio || !canAnswer
       retryTranscription.disabled = busy || voiceBusy
-      autoRead.disabled = false
+      autoRead.disabled = callModeEnabled
+      callMode.disabled = !callModeEnabled && (!canRecord || !canAnswer || busy || voiceBusy)
+      callMode.setAttribute('aria-pressed', String(callModeEnabled))
+      callMode.title = callModeEnabled ? '关闭通话模式' : '开启通话模式'
     }
 
     function stopSpeech() {
@@ -1353,6 +1427,7 @@ dialog.settings label {
       if (audioPlayer) {
         audioPlayer.onended = null
         audioPlayer.onerror = null
+        audioPlayer.onplaying = null
         audioPlayer.pause()
         audioPlayer.src = ''
         audioPlayer = null
@@ -1363,6 +1438,7 @@ dialog.settings label {
       }
       synthesizing = false
       speaking = false
+      presentingQuestion = false
       render()
     }
 
@@ -1377,13 +1453,13 @@ dialog.settings label {
       const controller = new AbortController()
       ttsAbort = controller
       synthesizing = true
-      speaking = true
+      presentingQuestion = true
       render()
       try {
         const response = await fetch('/tts', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({text: question.content}),
+          body: JSON.stringify({text: questionGuidance || question.content}),
           signal: controller.signal
         })
         if (!response.ok) {
@@ -1392,12 +1468,19 @@ dialog.settings label {
         }
         const blob = await response.blob()
         if (ttsAbort !== controller) return
-        synthesizing = false
         audioUrl = URL.createObjectURL(blob)
         const player = new Audio(audioUrl)
         audioPlayer = player
+        player.onplaying = () => {
+          if (audioPlayer !== player) return
+          synthesizing = false
+          speaking = true
+          render()
+        }
         player.onended = () => {
-          if (audioPlayer === player) stopSpeech()
+          if (audioPlayer !== player) return
+          if (callModeEnabled) void startRecording(true)
+          else stopSpeech()
         }
         player.onerror = () => {
           if (audioPlayer !== player) return
@@ -1407,7 +1490,7 @@ dialog.settings label {
         render()
         await player.play()
       } catch (err) {
-        if (err.name === 'AbortError') return
+        if (ttsAbort !== controller) return
         stopSpeech()
         showVoiceNote(err.message || '语音合成暂不可用，请检查语音模型配置。', true)
       }
@@ -1453,7 +1536,8 @@ dialog.settings label {
       }
     }
 
-    async function transcribeAudio(audio) {
+    async function transcribeAudio(audio, automatic = false) {
+      let submit = false
       voiceState = 'transcribing'
       retryAudio = null
       showVoiceNote(asrActiveId ? '正在调用 ASR 模型转写录音，请稍候…' : '正在本机转写录音，请稍候…')
@@ -1472,9 +1556,17 @@ dialog.settings label {
           showVoiceNote(result.error || '转写失败，请重录。', true)
           return
         }
-        answer.value = [answer.value.trimEnd(), result.text].filter(Boolean).join('\n').slice(0, answer.maxLength)
-        showVoiceNote('转写已填入回答框。请核对技术名词，再点击发送。')
-        answer.focus()
+        const text = result.text?.trim()
+        if (!text) {
+          showVoiceNote('没有识别到回答，可以重新录音。', true)
+          return
+        }
+        submit = automatic && callModeEnabled && !answer.value.trim()
+        answer.value = [answer.value.trimEnd(), text].filter(Boolean).join('\n').slice(0, answer.maxLength)
+        if (!submit) {
+          showVoiceNote('转写已填入回答框。请核对技术名词，再点击发送。')
+          answer.focus()
+        }
       } catch {
         retryAudio = audio
         showVoiceNote('转写请求未完成，可重试或直接输入文字。', true)
@@ -1482,35 +1574,60 @@ dialog.settings label {
         voiceState = 'idle'
         render()
       }
+      if (submit) byId('form').requestSubmit()
     }
 
-    async function startRecording() {
+    async function startRecording(automatic = false) {
       stopSpeech()
       voiceState = 'opening'
       showVoiceNote('正在申请麦克风权限…')
       render()
-      let stream
+      let stream, audioContext
       try {
-        stream = await navigator.mediaDevices.getUserMedia({audio: true})
+        stream = await navigator.mediaDevices.getUserMedia({audio: {echoCancellation: true, noiseSuppression: true}})
+        if (automatic && !callModeEnabled) {
+          stream.getTracks().forEach(track => track.stop())
+          voiceState = 'idle'
+          showVoiceNote('通话模式已关闭。')
+          render()
+          return
+        }
         const recording = new MediaRecorder(stream)
         const chunks = []
         let failed = false
+        let noSpeech = false
         let timer
+        let analyser, samples
+        if (automatic) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext
+          if (AudioContext) {
+            audioContext = new AudioContext()
+            analyser = audioContext.createAnalyser()
+            analyser.fftSize = 1024
+            audioContext.createMediaStreamSource(stream).connect(analyser)
+            samples = new Float32Array(analyser.fftSize)
+            void audioContext.resume().catch(() => {})
+          }
+        }
         const startedAt = performance.now()
+        let loudSamples = 0
+        let lastSpeechAt = 0
         recording.ondataavailable = event => {
           if (event.data.size) chunks.push(event.data)
         }
         recording.onerror = () => { failed = true }
         recording.onstop = () => {
           clearInterval(timer)
+          if (audioContext) void audioContext.close().catch(() => {})
           stream.getTracks().forEach(track => track.stop())
           recorder = null
           const audio = new Blob(chunks, {type: recording.mimeType || chunks[0]?.type})
-          if (!failed && audio.size && performance.now() - startedAt >= 1000) {
-            void transcribeAudio(audio)
+          if (!noSpeech && !failed && audio.size && performance.now() - startedAt >= 1000) {
+            void transcribeAudio(audio, automatic)
           } else {
             voiceState = 'idle'
-            showVoiceNote('录音太短或采集失败，请重新录制。', true)
+            showVoiceNote(noSpeech ? '暂未听到回答。准备好后可点击「录音回答」。' :
+              '录音太短或采集失败，请重新录制。', true)
             render()
           }
         }
@@ -1518,14 +1635,33 @@ dialog.settings label {
         recorder = recording
         retryAudio = null
         voiceState = 'recording'
-        recordAnswer.textContent = '结束录音 · 0 秒'
-        showVoiceNote('正在录音。说完后点击「结束录音」，最长 90 秒。')
+        recordAnswer.title = '停止录音 · 0 秒'
+        showVoiceNote(analyser ? '请开始回答。停顿约 1.6 秒后自动发送，也可点击「结束录音」。' :
+          '正在录音。说完后点击「结束录音」，最长 90 秒。')
         timer = setInterval(() => {
-          const elapsed = Math.floor((performance.now() - startedAt) / 1000)
-          recordAnswer.textContent = `结束录音 · ${elapsed} 秒`
-          if (elapsed >= RECORD_LIMIT_SECONDS && recording.state === 'recording') recording.stop()
-        }, 1000)
+          if (recording.state !== 'recording') return
+          const now = performance.now()
+          const elapsed = Math.floor((now - startedAt) / 1000)
+          recordAnswer.title = `停止录音 · ${elapsed} 秒`
+          if (analyser && audioContext.state === 'running' && callModeEnabled) {
+            analyser.getFloatTimeDomainData(samples)
+            const level = Math.sqrt(samples.reduce((sum, sample) => sum + sample * sample, 0) / samples.length)
+            loudSamples = level >= SPEECH_LEVEL ? loudSamples + 1 : 0
+            if (loudSamples >= 2) lastSpeechAt = now
+            if (!lastSpeechAt && now - startedAt >= WAIT_FOR_SPEECH_MS) {
+              noSpeech = true
+              recording.stop()
+              return
+            }
+            if (lastSpeechAt && now - lastSpeechAt >= END_OF_SPEECH_MS) {
+              recording.stop()
+              return
+            }
+          }
+          if (elapsed >= RECORD_LIMIT_SECONDS) recording.stop()
+        }, analyser ? 100 : 1000)
       } catch (failure) {
+        if (audioContext) void audioContext.close().catch(() => {})
         stream?.getTracks().forEach(track => track.stop())
         voiceState = 'idle'
         showVoiceNote(failure.name === 'NotAllowedError' ?
@@ -1537,9 +1673,19 @@ dialog.settings label {
 
     readQuestion.addEventListener('click', () => (speaking || synthesizing) ? stopSpeech() : speakQuestion())
     autoRead.addEventListener('change', () => { if (!autoRead.checked) stopSpeech() })
+    callMode.addEventListener('click', () => {
+      if (!callModeEnabled && !ttsActiveId) {
+        showVoiceNote('请先在「模型配置」中设置朗读语音，再开启通话模式。', true)
+        return
+      }
+      callModeEnabled = !callModeEnabled
+      if (!callModeEnabled && recorder?.state === 'recording') recorder.stop()
+      render()
+      if (callModeEnabled && !speaking && !synthesizing) void speakQuestion()
+    })
     recordAnswer.addEventListener('click', () => {
       if (recorder?.state === 'recording') recorder.stop()
-      else if (voiceState === 'idle') void startRecording()
+      else if (voiceState === 'idle') void startRecording(callModeEnabled)
     })
     retryTranscription.addEventListener('click', () => {
       if (retryAudio && voiceState === 'idle') void transcribeAudio(retryAudio)
@@ -1559,7 +1705,7 @@ dialog.settings label {
         })
         if (!response.ok) { const data = await response.json(); throw new Error(data.error || '请求失败，请重试。') }
         const reader = response.body.getReader(), decoder = new TextDecoder()
-        let buf = '', text = '', limit = questionLimit
+        let buf = '', text = '', outcome
         while (true) {
           const {done, value} = await reader.read()
           if (done) break
@@ -1569,19 +1715,31 @@ dialog.settings label {
           for (const line of lines) {
             if (!line.trim()) continue
             const msg = JSON.parse(line)
-            if (msg.delta) { text += msg.delta; onChunk?.(text) }
-            if (msg.question_limit) limit = msg.question_limit
+            if (msg.delta) {
+              if (path === '/interview' && !presentingQuestion) {
+                presentingQuestion = true
+                render()
+              }
+              text += msg.delta
+              onChunk?.(text)
+            }
+            if (msg.done) outcome = msg
           }
         }
-        if (!text.trim()) throw new Error('模型没有返回有效内容，请重试。')
-        return {[path === '/report' ? 'report' : 'question']: text.trim(), question_limit: limit}
+        if (!outcome || (!outcome.finished && !text.trim()) ||
+            (path === '/interview' && transcript.length && typeof outcome.accepted !== 'boolean')) {
+          throw new Error('面试官未返回完整结果，请重试。')
+        }
+        return {...outcome, [path === '/report' ? 'report' : 'question']: text.trim()}
       } catch (failure) {
+        presentingQuestion = false
         const notice = transcript.length ? chatError : error
         notice.hidden = false
         notice.textContent = failure.message || '请求失败，请检查连接。'
         return null
       } finally {
         busy = false
+        if (!(autoRead.checked || callModeEnabled) || !ttsModels.length || !ttsActiveId) presentingQuestion = false
         render()
       }
     }
@@ -1602,8 +1760,8 @@ dialog.settings label {
         reportText.textContent = result.report
         report.hidden = false
         report.scrollIntoView({block: 'nearest'})
-        render()
       }
+      render()
     }
 
     start.addEventListener('click', async () => {
@@ -1615,8 +1773,9 @@ dialog.settings label {
       stopSpeech()
       retryAudio = null
       showVoiceNote(canRecord ? '可录音回答，也可直接输入文字。' : '当前浏览器无法录音，可直接输入文字回答。')
-      context = {role: confirmedRole, resume: resumeText}
+      context = {role: confirmedRole, resume: resumeText, question_limit: Number(questionCount.value)}
       history = []
+      questionGuidance = ''
       ended = false
       answer.value = ''
       report.hidden = true
@@ -1644,7 +1803,7 @@ dialog.settings label {
         answer.closest('.chat').scrollIntoView({block: 'start'})
         answer.focus({preventScroll: true})
       }
-      if (result && autoRead.checked) speakQuestion()
+      if (result && (autoRead.checked || callModeEnabled)) speakQuestion()
     })
 
     answer.addEventListener('keydown', event => {
@@ -1660,14 +1819,6 @@ dialog.settings label {
       if (!content || busy || ended || !context || voiceState !== 'idle') return
       stopSpeech()
       const nextHistory = [...history, {role: 'user', content}]
-      if (nextHistory.length === 2 * questionLimit) {
-        history = nextHistory
-        bubble(content, 'user')
-        retryAudio = null
-        answer.value = ''
-        await generateReport()
-        return
-      }
       const userBubble = bubble(content, 'user')
       answer.value = ''
       const aiBubble = bubble('面试官正在思考…', 'assistant')
@@ -1675,16 +1826,28 @@ dialog.settings label {
         aiBubble.textContent = text
         messages.scrollTop = messages.scrollHeight
       })
-      if (!result) aiBubble.remove()
       if (result) {
-        history = [...nextHistory, {role: 'assistant', content: result.question}]
-        aiBubble.textContent = result.question
         retryAudio = null
-        answer.value = ''
-        showVoiceNote(canRecord ? '可录音回答，也可直接输入文字。' : '当前浏览器无法录音，可直接输入文字回答。')
+        if (result.finished) {
+          history = nextHistory
+          questionGuidance = ''
+          aiBubble.remove()
+          await generateReport()
+          return
+        }
+        aiBubble.textContent = result.question
+        if (result.accepted) {
+          history = [...nextHistory, {role: 'assistant', content: result.question}]
+          questionGuidance = ''
+          showVoiceNote(canRecord ? '可录音回答，也可直接输入文字。' : '当前浏览器无法录音，可直接输入文字回答。')
+        } else {
+          questionGuidance = result.question
+          showVoiceNote('请根据面试官的提示补充当前题。')
+        }
         render()
-        if (autoRead.checked) speakQuestion()
+        if (autoRead.checked || callModeEnabled) speakQuestion()
       } else {
+        aiBubble.remove()
         userBubble.remove()
         answer.value = content
       }
@@ -1692,7 +1855,7 @@ dialog.settings label {
     })
 
     finish.addEventListener('click', () => {
-      if (!busy && voiceState === 'idle' && history.length >= 2) generateReport()
+      if (ended && !busy && voiceState === 'idle') generateReport()
     })
 
     // ---------- 第 1 步：岗位 ----------
